@@ -1,5 +1,5 @@
-import '@/styles/globals.css'
-import { EthereumAddressProvider } from '@/contexts/EthereumAddressContext';
+import '../styles/globals.css'
+import { EthereumAddressProvider } from '../contexts/EthereumAddressContext';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
