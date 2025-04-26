@@ -1,13 +1,18 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
 body {
-  background-color: #05503C !important;
-  background-image: url('/BackgroundSpiral.svg');
+  background-color: #29221E !important;
   background-repeat: no-repeat;
   /* background-position: center; */
   /* background-size: cover; */
   font-family: 'Inter';
   font-style: normal;
-  min-height: 100vh;
-  margin: 0;
 }
 
 h1 {
@@ -42,7 +47,6 @@ button {
   line-height: 40px;
   text-decoration: none !important;
 }
-
   
 @media only screen and (max-width: 767px) {
   h1 {

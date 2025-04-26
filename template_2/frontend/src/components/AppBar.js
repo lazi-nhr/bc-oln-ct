@@ -12,15 +12,6 @@ import MenuItem from '@mui/material/MenuItem';
 import styles from '../styles/header.module.css';
 import Link from 'next/link';
 import useWeb3 from '../hooks/useWeb3';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-const theme = createTheme({
-    palette: {
-      primary: {
-        main: '#05503C',
-      },
-    },
-});
 
 const pages = ['Investors', 'Companies', 'Register'];
 const pagesNonAdmin = ['Investors', 'Register'];
@@ -55,15 +46,16 @@ function ResponsiveAppBar() {
 
     // check if user is contract owner, is boolean
     const isOwner = owners && owners.includes(account);
+
+    const isConnected = account !== null;
     
     if (!isOwner) {
         return (
-            <ThemeProvider theme={theme}>
             <AppBar position="static" color='primary'>
                 <Container maxWidth="xl">
                     <Toolbar disableGutters>
                         <img
-                            src="/SCLLogo.svg" 
+                            src="/logo.svg" 
                             alt="logo"
                             className={styles.logo}
                         />
@@ -119,24 +111,22 @@ function ResponsiveAppBar() {
                                 </Link>
                             ))}
                         </Box>
-                        <Box sx={{ flexGrow: 0 }}>                        
+                        <Box sx={{ flexGrow: 0 }}>
                             <IconButton sx={{ p: 0 }}>
                                 <Typography sx={{ color: 'white' }}>{truncateAddress(account)}</Typography>                
                             </IconButton>
                         </Box>
                     </Toolbar>
                 </Container>
-            </AppBar>   
-            </ThemeProvider>        
+            </AppBar> 
         )
     } else {
         return (
-            <ThemeProvider theme={theme}>
             <AppBar position="static" color="primary">
                 <Container maxWidth="xl">
                     <Toolbar disableGutters>
                         <img
-                            src="/SCLLogo.svg" 
+                            src="/logo.svg"
                             alt="logo"
                             className={styles.logo}
                         />
@@ -200,7 +190,6 @@ function ResponsiveAppBar() {
                     </Toolbar>
                 </Container>
             </AppBar>
-            </ThemeProvider>
         );
     }    
 }

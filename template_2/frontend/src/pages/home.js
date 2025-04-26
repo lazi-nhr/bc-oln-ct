@@ -40,6 +40,14 @@ const Section = styled(Box)({
   flexDirection: 'column',
   alignItems: 'center',
   maxWidth: 400,
+  width: '100%',
+});
+
+const SearchContainer = styled(Box)({
+  display: 'flex',
+  gap: '16px',
+  width: '100%',
+  alignItems: 'center',
 });
 
 const Title = styled(Typography)({
@@ -76,23 +84,27 @@ export const Home = () => {
           <MainContent>
             <Section>
               <Title variant="h2">Search for Product</Title>
-              <TextField
-                id="outlined-basic"
-                label="Unique Product Identifier"
-                variant="outlined"
-              />
-              <Button
-                variant="contained"
-                onClick={handleSearch}
-                sx={{
-                  gap: 1,
-                  padding: '8px 24px',
-                  textTransform: 'none',
-                  fontSize: '1rem',
-                }}
-              >
-                Search
-              </Button>
+              <SearchContainer>
+                <TextField
+                  id="outlined-basic"
+                  label="Unique Product Identifier"
+                  variant="outlined"
+                  fullWidth
+                />
+                <Button
+                  variant="contained"
+                  onClick={handleSearch}
+                  sx={{
+                    gap: 1,
+                    padding: '8px 24px',
+                    textTransform: 'none',
+                    fontSize: '1rem',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  Search
+                </Button>
+              </SearchContainer>
             </Section>
 
             <Separator />

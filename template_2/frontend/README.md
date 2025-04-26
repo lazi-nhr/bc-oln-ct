@@ -19,7 +19,7 @@ Navigate into the project directory and build the Docker image:
 cd SCLTokenization/paper/frontend
 ```
 ```bash
-docker build -t scl-tokenization-frontend .
+docker build -t d-app .
 ```
 
 
@@ -28,7 +28,7 @@ docker build -t scl-tokenization-frontend .
 Run the Docker container with the following command:
 
 ```bash
-docker run -p 3000:3000 -d scl-tokenization-frontend
+docker run -p 3000:3000 -d d-app
 ```
 
 
@@ -42,5 +42,25 @@ To stop the running Docker container, first get the container ID with `docker ps
 docker ps
 ```
 ```bash
-docker stop scl-tokenization-frontend
+docker stop d-app
+```
+
+--------------------------------------------------------------------
+
+Open the folder "frontend" in your terminal, e.g.:
+
+```bash
+cd /path/to/folder/frontend
+```
+
+If this your first time running the project or you have added some new code, run this:
+
+```bash
+npm install
+```
+
+Finally, you can run the application using this command:
+
+```bash
+npm run dev
 ```
