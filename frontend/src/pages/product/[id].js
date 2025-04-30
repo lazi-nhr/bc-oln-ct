@@ -30,6 +30,7 @@ const ScrollableContainer = styled('div')(({ theme }) => ({
   scrollbarColor: '#ffffff40 transparent',
 }));
 
+// Product Details Page
 export const ProductDetails = () => {
   const router = useRouter();
   const { id } = router.query;
@@ -85,8 +86,10 @@ export const ProductDetails = () => {
               <Title variant="h2">Product Details</Title>
               <div style={{ color: 'white', marginBottom: '16px', textAlign: 'center' }}>
                 UPI: {formatUPI(product.upi)}<br />
-                Product Name: {product.product_name}<br />
-                Status: {product.status}
+                Product Name: {product.name}<br />
+                Status: {trackingHistory.length > 0 
+                  ? getStatusString(Number(trackingHistory[trackingHistory.length - 1].status))
+                  : 'Unknown'}
               </div>
               <RegisterContainer>
                 <Button

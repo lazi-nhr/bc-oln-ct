@@ -67,9 +67,9 @@ o overview.js: get and display correct product list
 o hooks/useWeb3.js: call correct methods, infura (sam/lazi)
 o register.js: implement full blockchain integration
 o register.js: elaborate role name system (lazi)
-o product-creation.js: implement full blockchain integration
-o product-creation.js: elaborate status name system (lazi)
-o product-update.js: implement full blockchain integration
-o product-update.js: elaborate status name system (lazi)
+o product/create.js: implement full blockchain integration
+o product/create.js: elaborate status name system (lazi)
+o product/update/[id].js: implement full blockchain integration
+o product/update/[id].js: elaborate status name system (lazi)
 
 o tests
