@@ -62,7 +62,8 @@ public: media/images that are being used in user interface.
 ## To-Do (use Google Chrome)
 
 o index.js: implement correct metamask activation/initialization (xirui)
-o product/[id].js: connect to new admin smart contract to see full product details (lazi)
+x product/[id].js: connect to new admin smart contract to see full product details (lazi)
+o product/[id].js: implement button functionality that directs to product/update/[id].js (xirui)
 o overview.js: get and display correct product list
 o hooks/useWeb3.js: call correct methods, infura (sam/lazi)
 o register.js: implement full blockchain integration
