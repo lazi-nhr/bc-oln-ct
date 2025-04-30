@@ -1,32 +1,46 @@
-# supply-chain dApp
+# Supply-Chain dApp
 
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ## Setup/Installation
-Open the folder "frontend" in your terminal, e.g.:
+Firstly, you will need to clone this repository.
+
+Open the  "frontend" folder in your terminal, e.g.:
 
 ```bash
-cd /path/to/folder/frontend
+cd /path/to/folder/dApp
 ```
-
-If this your first time running the project or you have added some new code, run this:
+Tipp: in your IDE, you can right-click the folder and open it in an integrated terminal.
 
 ### Build (do only once at the beginning)
+If this is your first time running the project or you have added some new code, run this:
+
 ```bash
-frontend % npm install
+npm install
 ```
+
+and before doing that remove the following files/folders:
+- package-lock.json
+- node_modules
 
 ### Run
 Finally, you can run the application using this command:
 
 ```bash
-frontend % npm run dev
+npm run dev
 ```
 
-### See Frontend
-Now, open your web browser and navigate to `http://localhost:3000` to see the application running.
+### View
+Now, open your web browser (preferrably Google Chrome) and navigate to `http://localhost:3000` to view the application.
+
+### Blockchain
+To successfully interact with the blockchain, e.g. smart contracts, a user needs to use a wallet. 
+
+- Install the MetaMask plugin on Google Chrome. 
+- Create a wallet. 
+- Next, go to a Sepolia Faucet and ask for Test Token. (Note: You need 0.001 Ethereum funds in your wallet.)
 
 ### Stop
 Press CTRL+C in the terminal to stop the application from running.
@@ -35,12 +49,27 @@ Press CTRL+C in the terminal to stop the application from running.
 
 src: main folder. here, we do the work.
 
-pages: here are the individual sites.
+src/pages: here are the individual sites.
 
-contracts: smart contracts. these have to be deployed via Remix IDE.
+src/components: elements that are being reused across different pages.
 
-hooks: in our case, here we interact with the blockchain, e.g. smart contracts.
+src/contracts: smart contracts. these have to be deployed independently using Remix IDE.
+
+src/hooks: here, we interact with the blockchain, e.g. smart contracts.
 
 public: media/images that are being used in user interface.
 
-components: elements that are being reused across different pages.
+## To-Do (use Google Chrome)
+
+o index.js: implement correct metamask activation/initialization (xirui)
+o product/[id].js: connect to new admin smart contract to see full product details (lazi)
+o overview.js: get and display correct product list
+o hooks/useWeb3.js: call correct methods, infura (sam/lazi)
+o register.js: implement full blockchain integration
+o register.js: elaborate role name system (lazi)
+o product-creation.js: implement full blockchain integration
+o product-creation.js: elaborate status name system (lazi)
+o product-update.js: implement full blockchain integration
+o product-update.js: elaborate status name system (lazi)
+
+o tests
