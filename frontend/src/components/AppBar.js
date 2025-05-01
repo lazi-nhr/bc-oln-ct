@@ -12,8 +12,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Link from 'next/link';
 import useWeb3 from '../hooks/useWeb3';
 
-const pages = ['Overview', 'Register', 'Product-Creation', 'Product-Update'];
-const pagesNonAdmin = ['Overview', 'Register', 'Product-Creation', 'Product-Update'];
+const pages = ['Overview', 'Register', 'product/create', 'product/1', 'product/update/1'];
+const pagesNonAdmin = ['Overview', 'Register', 'product/create', 'product/1', 'product/update/1'];
 
 function ResponsiveAppBar() {
     const { web3, account, adminContract, trackingContract, products } = useWeb3();

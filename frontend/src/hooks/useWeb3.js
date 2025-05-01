@@ -72,18 +72,18 @@ const useWeb3 = () => {
         setEthereumAddress(currentAccount);
 
         // Load the admin contract
-        const adminContractAddress = '0xC77cB1877Daa26B071eF3781FF155952D5b7966F';
+        const adminContractAddress = '0xeA1923C66a2fBD7E72744a2C523DFd70E28Dc865';
         const adminContract = new web3Instance.eth.Contract(adminAbi, adminContractAddress);
         setAdminContract(adminContract);
 
         // Load the tracking contract
-        const trackingContractAddress = '0x4621603E572952D2cf446385f3145A8F78c3aFe1';
+        const trackingContractAddress = '0x897Bf9Ed6e7F560a27440E064bF1cd5780692D88';
         const trackingContract = new web3Instance.eth.Contract(trackingAbi, trackingContractAddress);
         setTrackingContract(trackingContract);
 
         // Load the products only if we have an account
         try {
-          const products = await adminContract.methods.getProducts(currentAccount).call();
+          const products = await trackingContract.methods.getProducts(currentAccount).call();
           setProducts(products);
         } catch (error) {
           console.error('Error loading products:', error);
@@ -109,7 +109,7 @@ const useWeb3 = () => {
           // Reload products for new account if contract is available
           if (adminContract) {
             try {
-              const products = await adminContract.methods.getProducts(accounts[0]).call();
+              const products = await trackingContract.methods.getProducts(accounts[0]).call();
               setProducts(products);
             } catch (error) {
               console.error('Error reloading products:', error);
@@ -160,7 +160,7 @@ const useWeb3 = () => {
     }
 
     try {
-      return await adminContract.methods.getProducts(account).call();
+      return await trackingContract.methods.getProducts(account).call();
     } catch (error) {
       console.error('Error fetching products:', error);
       throw error;

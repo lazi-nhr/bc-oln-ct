@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AppBar from '../components/AppBar';
+import AppBar from '../../components/AppBar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
@@ -7,7 +7,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { Layout, PageWrapper, MainContent, ColumnSection, Title, RegisterContainer } from '../components/Layout';
+import { Layout, PageWrapper, MainContent, ColumnSection, Title, RegisterContainer } from '../../components/Layout';
 
 export const ProductCreation = () => {
   const [status, setStatus] = useState('');

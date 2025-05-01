@@ -34,7 +34,7 @@ const ScrollableContainer = styled('div')(({ theme }) => ({
 export const ProductDetails = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { getProduct } = getWeb3();
+  const { getProduct, getUser } = getWeb3();
   const [productData, setProductData] = useState(null);
   const [error, setError] = useState(null);
 
@@ -115,6 +115,8 @@ export const ProductDetails = () => {
               <ScrollableContainer>
                 {trackingHistory.slice().reverse().map((stop, index) => {
                   const statusString = getStatusString(Number(stop.status));
+                  const username = getUser(stop.user).name;
+                  console.log('username:', username);
                   const date = new Date(Number(stop.time) * 1000);
                   const formattedDate = date.toLocaleDateString('de-DE', {
                     day: '2-digit',
@@ -143,7 +145,7 @@ export const ProductDetails = () => {
                         <i>Location: {coordinates}</i>
                         <br />
                         <span style={{ fontSize: '0.9em', color: '#888' }}>
-                          {truncateAddress(stop.user)}
+                          {truncateAddress(stop.user)} ({username})
                         </span>
                       </div>
                     </div>

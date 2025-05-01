@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import AppBar from '../components/AppBar';
+import AppBar from '../../../components/AppBar';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { Layout, PageWrapper, MainContent, ColumnSection, Title, RegisterContainer, ProductCard } from '../components/Layout';
-import { dummyProducts, formatUPI, getStatusColor } from '../data/dummyProducts';
+import { Layout, PageWrapper, MainContent, ColumnSection, Title, RegisterContainer } from '../../../components/Layout';
+import { dummyProducts, formatUPI, getStatusColor } from '../../../data/dummyProducts';
 
-const product = dummyProducts[0];
+// this is a dummy product. please implement the logic to get the product from the blockchain
+const product = {name: 'Product 1', upi: '420', status: 'New'};
 
 export const ProductUpdate = () => { 
   const [status, setStatus] = useState('');
@@ -33,7 +34,7 @@ export const ProductUpdate = () => {
               <Title variant="h2">Update Status</Title>
               <div style={{ color: 'white', marginBottom: '16px', textAlign: 'center' }}>
                 UPI: {formatUPI(product.upi)}<br />
-                Product Name: {product.product_name}<br />
+                Product Name: {product.name}<br />
                 Status: {product.status}
               </div>
               <RegisterContainer>
