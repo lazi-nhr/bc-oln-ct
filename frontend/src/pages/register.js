@@ -11,6 +11,8 @@ import { Layout, PageWrapper, MainContent, ColumnSection, Title, RegisterContain
 
 export const Register = () => {
   const [role, setRole] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSelect = (event) => {
     setRole(event.target.value);

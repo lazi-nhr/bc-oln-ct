@@ -12,8 +12,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Link from 'next/link';
 import useWeb3 from '../hooks/useWeb3';
 
-const pages = ['Overview', 'Register', 'product/create', 'product/1', 'product/update/1'];
-const pagesNonAdmin = ['Overview', 'Register', 'product/create', 'product/1', 'product/update/1'];
+const pagesInitialized = ['Overview', 'Register', 'product/create', 'product/1', 'product/update/1'];
+const pagesNotInitialized = ['Overview', 'Register', 'product/create', 'product/1', 'product/update/1'];
 
 function ResponsiveAppBar() {
     const { web3, account, adminContract, trackingContract, products } = useWeb3();
@@ -45,180 +45,93 @@ function ResponsiveAppBar() {
 
     const isConnected = account !== null;
     
-    if (!isConnected) {
-        return (
-            <AppBar position="static" color='primary'>
-                <Container maxWidth="xl">
-                    <Toolbar disableGutters>
-                        <Box
-                            component="div"
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                mr: 2,
-                                minWidth: { xs: '120px', md: '160px' }
-                            }}
+    const pagesArray = isConnected ? pagesInitialized : pagesNotInitialized;
+
+    return (
+        <AppBar position="static" color="primary">
+            <Container maxWidth="xl">
+                <Toolbar disableGutters>
+                    <Box
+                        component="div"
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            mr: 2,
+                            minWidth: { xs: '120px', md: '160px' }
+                        }}
+                    >
+                        <Link href="/" style={{ cursor: 'pointer' }}>
+                            <img
+                                src="/logo.png" 
+                                alt="logo"
+                                style={{
+                                    height: '32px',
+                                    width: 'auto',
+                                    display: 'block'
+                                }}
+                            />
+                        </Link>
+                    </Box>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                        <IconButton
+                        size="large"
+                        aria-label="account of current user"
+                        aria-controls="menu-appbar"
+                        aria-haspopup="true"
+                        onClick={handleOpenNavMenu}
+                        color="inherit"
                         >
-                            <Link href="/" style={{ cursor: 'pointer' }}>
-                                <img
-                                    src="/logo.png" 
-                                    alt="logo"
-                                    style={{
-                                        height: '32px',
-                                        width: 'auto',
-                                        display: 'block'
-                                    }}
-                                />
-                            </Link>
-                        </Box>
-                        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                            <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleOpenNavMenu}
-                            color="inherit"
-                            >
-                            <MenuIcon sx={{ color: "white"}} />
-                            </IconButton>
-                            <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorElNav}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                            }}
-                            open={Boolean(anchorElNav)}
-                            onClose={handleCloseNavMenu}
-                            sx={{
-                                display: { xs: 'block', md: 'none' }
-                            }}
-                            >
-                            {pages.map((page) => (
-                                <Link key={page} href={`/${page.toLowerCase()}`} passHref>
-                                    <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center" sx={{color: 'black', textDecoration: 'none' }}>   
-                                        {page}
-                                    </Typography>
-                                    </MenuItem>
-                                </Link>
-                            ))}
-                            </Menu>
-                        </Box>
-                        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                            {pagesNonAdmin.map((page) => (
-                                <Link key={page} href={`/${page.toLowerCase()}`} passHref>
-                                <Button
-                                    onClick={handleCloseNavMenu}
-                                    sx={{ my: 2, color: 'white', display: 'block' }}
-                                >
-                                    {page}
-                                </Button>
-                                </Link>
-                            ))}
-                        </Box>
-                        <Box sx={{ flexGrow: 0 }}>
-                            <IconButton sx={{ p: 0 }}>
-                                <Typography sx={{ color: 'white' }}>{truncateAddress(account)}</Typography>                
-                            </IconButton>
-                        </Box>
-                    </Toolbar>
-                </Container>
-            </AppBar> 
-        )
-    } else {
-        return (
-            <AppBar position="static" color="primary">
-                <Container maxWidth="xl">
-                    <Toolbar disableGutters>
-                        <Box
-                            component="div"
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                mr: 2,
-                                minWidth: { xs: '120px', md: '160px' }
-                            }}
+                        <MenuIcon sx={{ color: "white"}} />
+                        </IconButton>
+                        <Menu
+                        id="menu-appbar"
+                        anchorEl={anchorElNav}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'left',
+                        }}
+                        open={Boolean(anchorElNav)}
+                        onClose={handleCloseNavMenu}
+                        sx={{
+                            display: { xs: 'block', md: 'none' }
+                        }}
                         >
-                            <Link href="/" style={{ cursor: 'pointer' }}>
-                                <img
-                                    src="/logo.png" 
-                                    alt="logo"
-                                    style={{
-                                        height: '32px',
-                                        width: 'auto',
-                                        display: 'block'
-                                    }}
-                                />
-                            </Link>
-                        </Box>
-                        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                            <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleOpenNavMenu}
-                            color="inherit"
-                            >
-                            <MenuIcon sx={{ color: "white"}} />
-                            </IconButton>
-                            <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorElNav}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                            }}
-                            open={Boolean(anchorElNav)}
-                            onClose={handleCloseNavMenu}
-                            sx={{
-                                display: { xs: 'block', md: 'none' }
-                            }}
-                            >
-                            {pages.map((page) => (
-                                <Link key={page} href={`/${page.toLowerCase()}`} passHref>
-                                    <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center" sx={{color: 'black', textDecoration: 'none' }}>   
-                                        {page}
-                                    </Typography>
-                                    </MenuItem>
-                                </Link>
-                            ))}
-                            </Menu>
-                        </Box>
-                        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                            {pages.map((page) => (
-                                <Link key={page} href={`/${page.toLowerCase()}`} passHref>
-                                <Button
-                                    onClick={handleCloseNavMenu}
-                                    sx={{ my: 2, color: 'white', display: 'block' }}
-                                >
+                        {pagesArray.map((page) => (
+                            <Link key={page} href={`/${page.toLowerCase()}`} passHref>
+                                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                                <Typography textAlign="center" sx={{color: 'black', textDecoration: 'none' }}>   
                                     {page}
-                                </Button>
-                                </Link>
-                            ))}
-                        </Box>
-                        <Box sx={{ flexGrow: 0 }}>                        
-                            <IconButton sx={{ p: 0 }}>
-                                <Typography sx={{ color: 'white' }}>{truncateAddress(account)}</Typography>                
-                            </IconButton>
-                        </Box>
-                    </Toolbar>
-                </Container>
-            </AppBar>
-        );
-    }    
+                                </Typography>
+                                </MenuItem>
+                            </Link>
+                        ))}
+                        </Menu>
+                    </Box>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                        {pagesArray.map((page) => (
+                            <Link key={page} href={`/${page.toLowerCase()}`} passHref>
+                            <Button
+                                onClick={handleCloseNavMenu}
+                                sx={{ my: 2, color: 'white', display: 'block' }}
+                            >
+                                {page}
+                            </Button>
+                            </Link>
+                        ))}
+                    </Box>
+                    <Box sx={{ flexGrow: 0 }}>
+                        <IconButton sx={{ p: 0 }}>
+                            <Typography sx={{ color: 'white' }}>Your Address: {truncateAddress(account)}</Typography>
+                        </IconButton>
+                    </Box>
+                </Toolbar>
+            </Container>
+        </AppBar>
+    );
 }
 export default ResponsiveAppBar;

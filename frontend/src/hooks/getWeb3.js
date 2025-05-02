@@ -3,11 +3,7 @@ import Web3 from 'web3';
 import adminAbi from '../contracts/adminAbi.json';
 import trackingAbi from '../contracts/trackingAbi.json';
 import { useEthereumAddress } from '../contexts/EthereumAddressContext';
-
-const INFURA_URL = 'https://sepolia.infura.io/v3/63703b3efd0948c2adf595d101b8d981';
-const ADMIN_CONTRACT_ADDRESS = '0xeA1923C66a2fBD7E72744a2C523DFd70E28Dc865';
-const TRACKING_CONTRACT_ADDRESS = '0x897Bf9Ed6e7F560a27440E064bF1cd5780692D88';
-const DEFAULT_ADDRESS = '0xA5f11536E55f1D77b8033F56C42C5c7aEE1DA9EB';
+import { INFURA_URL, ADMIN_CONTRACT_ADDRESS, TRACKING_CONTRACT_ADDRESS, DEFAULT_ADDRESS } from './constants.js';
 
 const getWeb3 = () => {
   const [web3, setWeb3] = useState(null);
@@ -15,6 +11,10 @@ const getWeb3 = () => {
   const [trackingContract, setTrackingContract] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const { setEthereumAddress } = useEthereumAddress();
+  
+  // Add caches for users and products
+  const [userCache, setUserCache] = useState({});
+  const [productCache, setProductCache] = useState({});
 
   useEffect(() => {
     const initializeWeb3 = async () => {
@@ -46,40 +46,66 @@ const getWeb3 = () => {
     }
 
     try {
-      // Get both product details and tracking history in parallel
-      const [user] = await Promise.all([
-        adminContract.methods.getUser(userAddress).call()
-      ]);
-      return { user };
+      // Check cache first
+      if (userCache[userAddress]) {
+        console.log('Using cached user data for:', userAddress);
+        return userCache[userAddress];
+      }
+
+      // If not in cache, fetch from blockchain
+      const checksumAddress = web3.utils.toChecksumAddress(userAddress);
+      const user = await adminContract.methods.getUser(checksumAddress).call();
+      
+      // Update cache
+      setUserCache(prev => ({
+        ...prev,
+        [userAddress]: user
+      }));
+
+      return user;
     } catch (error) {
       console.error('Error fetching user (', userAddress, '):', error);
       throw error;
     }
-  }, [adminContract, isInitialized]);
+  }, [adminContract, isInitialized, web3, userCache]);
 
-  // Get product details and tracking history for a specific UPI
   const getProduct = useCallback(async (upi) => {
     if (!isInitialized) {
       throw new Error('getWeb3 not initialized');
     }
 
     try {
-      // Get both product details and tracking history in parallel
+      // Check cache first
+      if (productCache[upi]) {
+        console.log('Using cached product data for UPI:', upi);
+        return productCache[upi];
+      }
+
+      // If not in cache, fetch from blockchain
       const [product, trackingHistory] = await Promise.all([
         adminContract.methods.getProduct(upi).call(),
         trackingContract.methods.getStops(upi).call()
       ]);
-      return { product, trackingHistory };
+
+      const productData = { product, trackingHistory };
+      
+      // Update cache
+      setProductCache(prev => ({
+        ...prev,
+        [upi]: productData
+      }));
+
+      return productData;
     } catch (error) {
       console.error('Error fetching product (', upi, '):', error);
       throw error;
     }
-  }, [adminContract, trackingContract, isInitialized]);
+  }, [adminContract, trackingContract, isInitialized, productCache]);
 
-  // Get all products from a specific user
   const getProducts = useCallback(async (userAddress) => {
     if (!isInitialized) {
       userAddress = DEFAULT_ADDRESS;
+      throw new Error('getWeb3 not initialized');
     }
 
     try {
@@ -90,6 +116,7 @@ const getWeb3 = () => {
       // Ensure the address is properly formatted
       const checksumAddress = web3.utils.toChecksumAddress(userAddress);
       setEthereumAddress(checksumAddress);
+      console.log('checksumAddress', checksumAddress);
       
       // Get all products from a user
       const products = await trackingContract.methods.getProducts(checksumAddress).call();
@@ -100,11 +127,18 @@ const getWeb3 = () => {
     }
   }, [adminContract, isInitialized, web3, setEthereumAddress]);
 
+  // Add a function to clear cache if needed
+  const clearCache = useCallback(() => {
+    setUserCache({});
+    setProductCache({});
+  }, []);
+
   return {
     isInitialized,
     getProduct,
     getUser,
-    getProducts
+    getProducts,
+    clearCache
   };
 };
 

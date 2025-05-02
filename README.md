@@ -63,14 +63,16 @@ public: media/images that are being used in user interface.
 
 o index.js: implement correct metamask activation/initialization (xirui)
 x product/[id].js: connect to new admin smart contract to see full product details (lazi)
-o product/[id].js: implement button functionality that directs to product/update/[id].js (xirui)
+x product/[id].js: implement button functionality that directs to product/update/[id].js
 x overview.js: get and display correct product list
-o hooks/useWeb3.js: call correct methods, infura (sam/lazi)
-o register.js: implement full blockchain integration
-o register.js: elaborate role name system (lazi)
+o hooks/useWeb3.js: call correct methods, infura (sam)
+o register.js: implement full blockchain integration (lazi)
+o register.js: elaborate role name system
 o product/create.js: implement full blockchain integration
-o product/create.js: elaborate status name system (lazi)
+o product/create.js: elaborate status name system
 o product/update/[id].js: implement full blockchain integration
-o product/update/[id].js: elaborate status name system (lazi)
+o product/update/[id].js: elaborate status name system
+o add modifiers to smart contracts. role restrictions, user restrictions (lennart)
+o 
 
 o tests

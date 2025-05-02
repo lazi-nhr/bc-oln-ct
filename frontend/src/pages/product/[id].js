@@ -55,8 +55,8 @@ export const ProductDetails = () => {
     fetchProduct();
   }, [getProduct, id]);
 
-  const handleUpdate = () => {
-    console.log('Updating product:', id);
+  const handleClick = () => {
+    router.push(`/product/update/${id}`);
   };
 
   // Function to truncate the address for better readability
@@ -94,7 +94,7 @@ export const ProductDetails = () => {
               <RegisterContainer>
                 <Button
                   variant="contained"
-                  onClick={handleUpdate}
+                  onClick={handleClick}
                   sx={{
                     gap: 1,
                     padding: '8px 24px',
