@@ -33,6 +33,11 @@ export const ProductCreation = () => {
 
   const handleCreate = async () => {
     try {
+      if (!status || !productName) {
+        alert("Please enter a product name and select a status.");
+        return;
+      }
+
       // Connect to Ethereum network
       if (typeof window.ethereum === "undefined") {
         alert("Please install MetaMask to use this feature.");
