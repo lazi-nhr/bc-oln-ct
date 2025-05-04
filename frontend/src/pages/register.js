@@ -26,11 +26,10 @@ export const Register = () => {
   const [username, setUsername] = useState(""); // For storing the username
 
   const roleOptions = [
-    { value: 1, label: "Buyer" },
+    { value: 1, label: "Producer" },
     { value: 2, label: "Retailer" },
-    { value: 3, label: "Distributor" },
-    { value: 4, label: "Manufacturer" },
-    { value: 5, label: "Quality Control" },
+    { value: 3, label: "Shipper" },
+    { value: 4, label: "Customer" },
   ];
 
   // Handle the role selection change
