@@ -1,13 +1,14 @@
-// SPDX-License-Identifier: MIT
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
+import "./Admin.sol";
+
 interface ITrack {
-    // Stop struct to store stop information
     struct Stop {
-        uint256 time; // in unix time format
-        int64 latitude; // has the format 40712776, e.g. 40.712776 E
-        int64 longitude; // has the format -74005974, e.g. 74.005974 W
-        uint8 status; // 0: new, 1: processed, 2: produced, 3: shipped, 4: received, 5: sold, 6: delivered, 7: cancelled, 8: rejected, 9: returned, 10: completed
+        uint256 time;
+        int64 latitude;
+        int64 longitude;
+        uint8 status;
         address user;
     }
 
@@ -16,18 +17,21 @@ interface ITrack {
     function getProducts(address user) external view returns (uint256[] memory);
 }
 
-
 contract Track is ITrack {
-
-    // Mapping of product UPI numbers to stop information
     mapping(uint256 => Stop[]) private _stops;
-
     mapping(address => uint256[]) private _userToProducts;
-
     mapping(address => mapping(uint256 => bool)) private _ownedProducts;
 
-    // Constructor to initialize the contract with default stops
-    constructor() {
+    IAdmin public admin;
+
+    uint8 constant ROLE_PRODUCER = 1;
+    uint8 constant ROLE_SHIPPER = 3;
+
+    constructor(address adminAddress) {
+        admin = IAdmin(adminAddress);
+    }
+
+    /*constructor() {
         addStop(1734875447, 1, 1, 40712776, -74005974);
         addStop(1734875447, 1, 2, 60712776, -34005974);
         addStop(1735566647, 1, 3, 31712776, 20005974);
@@ -38,22 +42,31 @@ contract Track is ITrack {
         addStop(1735566647, 2, 4, 31712776, 20005974);
         addStop(1735566647, 2, 4, 31712776, 20005974);
         addStop(1746017447, 2, 5, 80712776, -21005974);
+    }*/
+
+    modifier onlyRoles(uint8 role1, uint8 role2) {
+        IAdmin.User memory user = admin.getUser(msg.sender);
+        require(user.role == role1 || user.role == role2, "Access denied");
+        _;
     }
 
-    // Add a stop to the product
     function addStop(
-        uint256 time, uint256 upi, uint8 status, int64 latitude, int64 longitude) public returns (bool) {
+        uint256 time,
+        uint256 upi,
+        uint8 status,
+        int64 latitude,
+        int64 longitude
+    ) public onlyRoles(ROLE_PRODUCER, ROLE_SHIPPER) returns (bool) {
         _stops[upi].push(Stop(time, latitude, longitude, status, msg.sender));
 
-        // Check if the product is already owned by the user
         if (!_ownedProducts[msg.sender][upi]) {
             _userToProducts[msg.sender].push(upi);
             _ownedProducts[msg.sender][upi] = true;
         }
+
         return true;
     }
 
-    // Get the stops for a product
     function getStops(uint256 upi) public view returns (Stop[] memory) {
         return _stops[upi];
     }
@@ -62,3 +75,5 @@ contract Track is ITrack {
         return _userToProducts[user];
     }
 }
+
+
