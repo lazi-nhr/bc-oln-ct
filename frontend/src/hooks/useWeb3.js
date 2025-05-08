@@ -3,9 +3,7 @@ import { useEthereumAddress } from '../contexts/EthereumAddressContext';
 import Web3 from 'web3';
 import adminAbi from '../contracts/adminAbi.json';
 import trackingAbi from '../contracts/trackingAbi.json';
-
-const SEPOLIA_CHAIN_ID = '0xaa36a7';
-const SEPOLIA_RPC_URL = 'https://sepolia.infura.io/v3/63703b3efd0948c2adf595d101b8d981';
+import { ADMIN_CONTRACT_ADDRESS, TRACKING_CONTRACT_ADDRESS } from './constants';
 
 const useWeb3 = () => {
   const [web3, setWeb3] = useState(null);
@@ -18,8 +16,9 @@ const useWeb3 = () => {
 
   useEffect(() => {
     const initializeWeb3 = async () => {
+      // Check if MetaMask is installed (e.g. Safari or Chrome without extension are not supported)
       if (typeof window === 'undefined' || !window.ethereum) {
-        console.error('Please install MetaMask!');
+        console.error('Please install MetaMask or use a different Browser! [useWeb3.js]');
         return;
       }
 
@@ -30,70 +29,29 @@ const useWeb3 = () => {
 
         // Request account access using the modern method
         const accounts = await window.ethereum.request({ 
-          method: 'eth_requestAccounts' 
+          method: 'eth_requestAccounts'
         });
 
         if (!accounts || accounts.length === 0) {
-          throw new Error('No accounts found. Please connect your wallet.');
+          console.error('No accounts found. Please connect your wallet. [useWeb3.js]');
         }
 
-        // Check and switch to Sepolia network if needed
-        const chainId = await web3Instance.eth.getChainId();
-        if (chainId.toString(16) !== SEPOLIA_CHAIN_ID.substring(2)) {
-          try {
-            await window.ethereum.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: SEPOLIA_CHAIN_ID }],
-            });
-          } catch (switchError) {
-            if (switchError.code === 4902) {
-              await window.ethereum.request({
-                method: 'wallet_addEthereumChain',
-                params: [{
-                  chainId: SEPOLIA_CHAIN_ID,
-                  chainName: 'Sepolia Test Network',
-                  nativeCurrency: {
-                    name: 'SepoliaETH',
-                    symbol: 'ETH',
-                    decimals: 18,
-                  },
-                  rpcUrls: [SEPOLIA_RPC_URL],
-                  blockExplorerUrls: ['https://sepolia.etherscan.io'],
-                }],
-              });
-            } else {
-              throw switchError;
-            }
-          }
-        }
-        
         const currentAccount = accounts[0];
         setAccount(currentAccount);
         setEthereumAddress(currentAccount);
 
         // Load the admin contract
-        const adminContractAddress = '0xeA1923C66a2fBD7E72744a2C523DFd70E28Dc865';
-        const adminContract = new web3Instance.eth.Contract(adminAbi, adminContractAddress);
+        const adminContract = new web3Instance.eth.Contract(adminAbi, ADMIN_CONTRACT_ADDRESS);
         setAdminContract(adminContract);
 
         // Load the tracking contract
-        const trackingContractAddress = '0x897Bf9Ed6e7F560a27440E064bF1cd5780692D88';
-        const trackingContract = new web3Instance.eth.Contract(trackingAbi, trackingContractAddress);
+        const trackingContract = new web3Instance.eth.Contract(trackingAbi, TRACKING_CONTRACT_ADDRESS);
         setTrackingContract(trackingContract);
-
-        // Load the products only if we have an account
-        try {
-          const products = await trackingContract.methods.getProducts(currentAccount).call();
-          setProducts(products);
-        } catch (error) {
-          console.error('Error loading products:', error);
-        }
 
         setIsInitialized(true);
       } catch (error) {
-        console.error('Failed to initialize Web3:', error);
+        console.error('Failed to initialize Web3 [useWeb3.js]:', error);
         setIsInitialized(false);
-        throw new Error('Web3 initialization failed. Please ensure MetaMask is connected.');
       }
     };
 
@@ -112,7 +70,7 @@ const useWeb3 = () => {
               const products = await trackingContract.methods.getProducts(accounts[0]).call();
               setProducts(products);
             } catch (error) {
-              console.error('Error reloading products:', error);
+              console.error('Error reloading products: [useWeb3.js]', error);
             }
           }
         } else {

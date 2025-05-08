@@ -16,7 +16,7 @@ const pagesInitialized = ['Overview', 'Register', 'product/create', 'product/1',
 const pagesNotInitialized = ['Overview', 'Register', 'product/create', 'product/1', 'product/update/1'];
 
 function ResponsiveAppBar() {
-    const { web3, account, adminContract, trackingContract, products } = useWeb3();
+    const { account } = useWeb3();
 
 
     // Function to truncate the address for better readability
