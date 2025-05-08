@@ -15,11 +15,10 @@ import {
   RegisterContainer,
 } from "../../../components/Layout";
 import {
-  dummyProducts,
   PRODUCT_STATUS,
   formatUPI,
   getStatusColor,
-} from "../../../data/dummyProducts.js";
+} from "../../../hooks/constants.js";
 
 import { addStop } from "../../../hooks/setWeb3.js";
 import { getProduct } from "../../../hooks/getWeb3.js";
