@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import Web3 from 'web3';
 import adminAbi from '../contracts/adminAbi.json';
+import trackingAbi from '../contracts/trackingAbi.json';
 import { INFURA_URL, ADMIN_CONTRACT_ADDRESS, TRACKING_CONTRACT_ADDRESS } from './constants.js';
 
 const setWeb3 = () => {
@@ -79,7 +80,7 @@ const setWeb3 = () => {
     }
 
     if (!web3 || !adminContract) {
-      console.error('Web3 or contract not initialized. [setWeb3.js]');
+      throw new Error('Web3 or contract not initialized. [setWeb3.js]');
     }
 
     try {
@@ -110,7 +111,7 @@ const setWeb3 = () => {
     }
 
     if (!web3 || !trackingContract) {
-      console.error('Web3 or contract not initialized. [setWeb3.js]');
+      throw new Error('Web3 or contract not initialized. [setWeb3.js]');
     }
 
     try {
