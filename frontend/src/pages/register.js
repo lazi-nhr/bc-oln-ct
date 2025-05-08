@@ -40,13 +40,13 @@ export const Register = () => {
   // Handle the registration logic
   const handleRegister = async () => {
     if (!username || !role) {
-      alert("Please enter a username and select a role.");
+      console.error("Username or role is missing.");
       return;
     }
 
     // Check if MetaMask is installed
     if (!window.ethereum) {
-      alert("Please install MetaMask to register.");
+      console.error("MetaMask is not installed.");
       return;
     }
 

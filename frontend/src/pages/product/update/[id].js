@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import AppBar from "../../../components/AppBar";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
@@ -21,19 +21,67 @@ import {
   getStatusColor,
 } from "../../../data/dummyProducts.js";
 
-// this is a dummy product. please implement the logic to get the product from the blockchain
-const product = { name: "Product 1", upi: "420", status: "New" };
+import { addStop } from "../../../hooks/setWeb3.js";
+import { getProduct } from "../../../hooks/getWeb3.js";
 
 export const ProductUpdate = () => {
   const [status, setStatus] = useState("");
+  const { id } = router.query;
+  const [product, setProduct] = useState(null);
+
+  // Get product information from the blockchain
+  useEffect(() => {
+    // Fetch product information from the blockchain
+    // For now, we are using a dummy product
+    const fetchProduct = async () => {
+      
+      try {
+        // Try to get the product from the blockchain using the [id] in the URL
+        const product = await getProduct(parseInt(id));
+        setProduct(product);
+      } catch (error) {
+        console.error("Failed to fetch product:", error);
+      }
+    };
+    fetchProduct();
+  }, [id]);
+        
 
   const handleSelect = (event) => {
     setStatus(event.target.value);
   };
 
   const handleUpdate = (value) => {
-    console.log("Searching for:", value);
-    // Add your search logic here
+    if (!status) {
+      console.error("Status is missing.");
+      return;
+    }
+
+    // Get current timestamp/date
+    const currentTimestamp = Math.floor(Date.now() / 1000);
+    setTimestamp(currentTimestamp);
+
+    // Get current coordinates
+    if (!navigator.geolocation) {
+      console.error("Geolocation is not supported by this browser.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        setLatitude(latitude);
+        setLongitude(longitude);
+      }
+    );
+
+    // Call the setProduct function to register the product
+    try {
+      addStop(timestamp, upi, status, latitude, longitude);
+    }
+    catch (error) {
+      console.error("Error adding tracking stop:", error);
+    }
   };
 
   return (

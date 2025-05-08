@@ -17,51 +17,51 @@ import {
   Title,
   RegisterContainer,
 } from "../../components/Layout";
-import { PRODUCT_STATUS, normalizeStatus } from "../../data/dummyProducts";
-
-import AdminAbi from "../../contracts/adminAbi.json";
-import { ethers } from "ethers";
-import { ADMIN_CONTRACT_ADDRESS } from "../../hooks/constants.js";
+import { PRODUCT_STATUS, normalizeStatus } from "../../hooks/constants.js";
+import { setProduct, addStop } from "../../hooks/setWeb3.js";
 
 export const ProductCreation = () => {
   const [status, setStatus] = useState("");
   const [productName, setProductName] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
+  const [timestamp, setTimestamp] = useState("");
 
   const handleSelect = (event) => {
     setStatus(event.target.value);
   };
 
   const handleCreate = async () => {
+    if (!productName || !status) {
+      console.error("Product name or status is missing.");
+      return;
+    }
+
+    // Get current timestamp/date
+    const currentTimestamp = Math.floor(Date.now() / 1000);
+    setTimestamp(currentTimestamp);
+
+    // Get current coordinates
+    if (!navigator.geolocation) {
+      console.error("Geolocation is not supported by this browser.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        setLatitude(latitude);
+        setLongitude(longitude);
+      }
+    );
+
+    // Call the setProduct function to register the product
     try {
-      if (!status || !productName) {
-        alert("Please enter a product name and select a status.");
-        return;
-      }
-
-      // Connect to Ethereum network
-      if (typeof window.ethereum === "undefined") {
-        alert("Please install MetaMask to use this feature.");
-        return;
-      }
-
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-
-      // Connect to the Admin contract
-      const adminContract = new ethers.Contract(
-        ADMIN_CONTRACT_ADDRESS,
-        AdminAbi,
-        signer
-      );
-
-      // Call the setProduct function on the smart contract
-      const tx = await adminContract.setProduct(productName);
-      await tx.wait(); // Wait for transaction to be mined
-
-      alert("Product created successfully!");
-    } catch (error) {
+      const upi = await setProduct(productName);
+      addStop(timestamp, upi, status, latitude, longitude);
+    }
+    catch (error) {
       console.error("Error creating product:", error);
-      alert("Failed to create product.");
     }
   };
 
