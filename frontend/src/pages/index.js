@@ -4,18 +4,12 @@ import AppBar from '../components/AppBar';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Search from '../components/Search';
-import { Layout, PageWrapper, MainContent, ColumnSection, SearchContainer, ProductsContainer, ProductCard, Title, Separator } from '../components/Layout';
+import { Layout, PageWrapper, MainContent, ColumnSection, Title, Separator } from '../components/Layout';
+import { getUser } from "../hooks/getWeb3.js";
 
 export const Home = () => {
   const router = useRouter();
-  const [searchValue, setSearchValue] = useState('');
   const [ethereumAddress, setEthereumAddress] = useState(null);
-
-  const handleSearch = () => {
-    if (searchValue.trim()) {
-      router.push(`/product/${searchValue}`);
-    }
-  };
 
   const handleConnect = async () => {
     if (window.ethereum) {
@@ -26,14 +20,27 @@ export const Home = () => {
         setEthereumAddress(accounts[0]);
         // accounts[0] is the user's wallet address
         console.log('Connected account:', ethereumAddress);
-        // direct to overview page
-        navigate('/overview');
+        
+        // Call the getUser function to check if the user is registered
+        const user = await getUser(ethereumAddress);
+        console.log('User:', user);
+
+        // Check if the user is registered
+        if (user.role === 0) {
+          console.log('User is not registered');
+          // Direct to register page
+          router.push('/register');
+        } else {
+          console.log('User is registered');
+          // Direct to overview page
+          router.push('/overview');
+        }
 
       } catch (error) {
         console.error('User rejected the request');
       }
     } else {
-      alert('Please install MetaMask!');
+      console.error('Please install MetaMask!');
     }
   };
 
