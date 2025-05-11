@@ -16,7 +16,7 @@ import {
   RegisterContainer,
 } from "../../components/Layout";
 import { PRODUCT_STATUS, normalizeStatus } from "../../hooks/constants.js";
-import { setProduct, addStop } from "../../hooks/useSetWeb3.js";
+import useSetWeb3 from "../../hooks/setWeb3.js";
 
 export const ProductCreation = () => {
   const [status, setStatus] = useState("");
@@ -25,12 +25,15 @@ export const ProductCreation = () => {
   const [longitude, setLongitude] = useState("");
   const [timestamp, setTimestamp] = useState("");
 
+  const { setProduct, addStop } = useSetWeb3();
+
   const handleSelect = (event) => {
     setStatus(event.target.value);
   };
 
   const handleCreate = async () => {
     if (!productName || !status) {
+      alert("Product name or status is missing.");
       console.error("Product name or status is missing.");
       return;
     }
@@ -41,6 +44,7 @@ export const ProductCreation = () => {
 
     // Get current coordinates
     if (!navigator.geolocation) {
+      alert("Geolocation is not supported by this browser.");
       console.error("Geolocation is not supported by this browser.");
       return;
     }
@@ -56,7 +60,7 @@ export const ProductCreation = () => {
       const upi = await setProduct(productName);
       addStop(timestamp, upi, status, latitude, longitude);
     } catch (error) {
-      console.error("Error creating product:", error);
+      alert(`Error creating product: ${error.message}`);
     }
   };
 
