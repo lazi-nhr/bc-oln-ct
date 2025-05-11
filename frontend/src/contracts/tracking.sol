@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
 import "./Admin.sol";
@@ -24,30 +24,42 @@ contract Track is ITrack {
 
     IAdmin public admin;
 
+    // Role constants (mirroring Admin)
     uint8 constant ROLE_PRODUCER = 1;
     uint8 constant ROLE_SHIPPER = 3;
 
-    constructor(address adminAddress) {
-        admin = IAdmin(adminAddress);
+    // =========================
+    //        MODIFIERS
+    // =========================
+
+    /// @notice Prevent contract-based calls
+    modifier onlyEOA() {
+        require(msg.sender == tx.origin, "Access denied: contract call");
+        _;
     }
 
-    /*constructor() {
-        addStop(1734875447, 1, 1, 40712776, -74005974);
-        addStop(1734875447, 1, 2, 60712776, -34005974);
-        addStop(1735566647, 1, 3, 31712776, 20005974);
-        addStop(1746017447, 1, 4, 80712776, -21005974);
-
-        addStop(1734529847, 2, 3, 40712776, -74005974);
-        addStop(1734875447, 2, 3, 60712776, -34005974);
-        addStop(1735566647, 2, 4, 31712776, 20005974);
-        addStop(1735566647, 2, 4, 31712776, 20005974);
-        addStop(1746017447, 2, 5, 80712776, -21005974);
-    }*/
-
+    /// @notice Only allow specific roles
     modifier onlyRoles(uint8 role1, uint8 role2) {
         IAdmin.User memory user = admin.getUser(msg.sender);
-        require(user.role == role1 || user.role == role2, "Access denied");
+        require(user.role == role1 || user.role == role2, "Access denied: role mismatch");
         _;
+    }
+
+    /// @notice Validate timestamp and coordinates
+    modifier validInput(uint256 time, int64 lat, int64 lon) {
+        require(time > 0, "Invalid timestamp");
+        require(lat != 0 && lon != 0, "Invalid coordinates");
+        _;
+    }
+
+    /// @notice Validate UPI > 0
+    modifier validUPI(uint256 upi) {
+        require(upi > 0, "Invalid UPI");
+        _;
+    }
+
+    constructor(address adminAddress) {
+        admin = IAdmin(adminAddress);
     }
 
     function addStop(
@@ -56,7 +68,14 @@ contract Track is ITrack {
         uint8 status,
         int64 latitude,
         int64 longitude
-    ) public onlyRoles(ROLE_PRODUCER, ROLE_SHIPPER) returns (bool) {
+    )
+        public
+        onlyEOA
+        onlyRoles(ROLE_PRODUCER, ROLE_SHIPPER)
+        validInput(time, latitude, longitude)
+        validUPI(upi)
+        returns (bool)
+    {
         _stops[upi].push(Stop(time, latitude, longitude, status, msg.sender));
 
         if (!_ownedProducts[msg.sender][upi]) {
@@ -67,7 +86,7 @@ contract Track is ITrack {
         return true;
     }
 
-    function getStops(uint256 upi) public view returns (Stop[] memory) {
+    function getStops(uint256 upi) public view validUPI(upi) returns (Stop[] memory) {
         return _stops[upi];
     }
 
@@ -75,5 +94,3 @@ contract Track is ITrack {
         return _userToProducts[user];
     }
 }
-
-

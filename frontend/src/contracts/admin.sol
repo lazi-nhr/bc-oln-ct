@@ -29,8 +29,37 @@ contract Admin is IAdmin {
     mapping(uint256 => Product) private _products;
     uint256 private _productCount;
 
+    // ==============================
+    //         MODIFIERS
+    // ==============================
+
+    /// @notice Ensure that only users with a specific role can access the function
     modifier onlyRole(uint8 requiredRole) {
         require(_users[msg.sender].role == requiredRole, "Access denied: incorrect role");
+        _;
+    }
+
+    /// @notice Prevent calls from contracts (optional for public access functions)
+    modifier onlyEOA() {
+        require(msg.sender == tx.origin, "Access denied: contract call");
+        _;
+    }
+
+    /// @notice Ensure that a string input is not empty
+    modifier nonEmptyString(string memory str) {
+        require(bytes(str).length > 0, "Input cannot be empty");
+        _;
+    }
+
+    /// @notice Ensure that a user is not already registered
+    modifier notRegistered() {
+        require(_users[msg.sender].role == 0, "User already registered");
+        _;
+    }
+
+    /// @notice Ensure that a user role is valid
+    modifier validRole(uint8 role) {
+        require(role >= 1 && role <= 4, "Invalid role");
         _;
     }
 
@@ -40,9 +69,14 @@ contract Admin is IAdmin {
         setProduct("Apple");
     }
 
-    function setUser(string memory username, uint8 role) public returns (bool) {
-        require(_users[msg.sender].role == 0, "User already registered");
-        require(role >= 1 && role <= 4, "Invalid role");
+    function setUser(string memory username, uint8 role)
+        public
+        onlyEOA
+        notRegistered
+        validRole(role)
+        nonEmptyString(username)
+        returns (bool)
+    {
         _users[msg.sender] = User(msg.sender, username, role);
         return true;
     }
@@ -51,7 +85,13 @@ contract Admin is IAdmin {
         return _users[account];
     }
 
-    function setProduct(string memory productName) public onlyRole(ROLE_PRODUCER) returns (uint256) {
+    function setProduct(string memory productName)
+        public
+        onlyEOA
+        onlyRole(ROLE_PRODUCER)
+        nonEmptyString(productName)
+        returns (uint256)
+    {
         _productCount++;
         _products[_productCount] = Product(_productCount, productName);
         return _productCount;
