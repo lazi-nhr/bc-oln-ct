@@ -1,5 +1,5 @@
-export const ADMIN_CONTRACT_ADDRESS = "0xeA1923C66a2fBD7E72744a2C523DFd70E28Dc865";
-export const TRACKING_CONTRACT_ADDRESS = "0x7890123456789012345678901234567890123456";
+export const ADMIN_CONTRACT_ADDRESS = "0x7DccC38081fc48f3D7d7FAeEa377631d7B19DD81";
+export const TRACKING_CONTRACT_ADDRESS = "0xE403146E780A988FbCD24359e8374422F37d9492";
 export const DEFAULT_ADDRESS = "0xA5f11536E55f1D77b8033F56C42C5c7aEE1DA9EB";
 export const SEPOLIA_CHAIN_ID = "0xaa36a7";
 export const SEPOLIA_RPC_URL = "https://sepolia.infura.io/v3/63703b3efd0948c2adf595d101b8d981";
@@ -21,6 +21,20 @@ export const PRODUCT_STATUS = {
     COMPLETED: 'completed',
   };
 
+export const PRODUCT_STATUS_NUMBER = {
+    NEW: 0,
+    PROCESSED: 1,
+    PRODUCED: 2,
+    SHIPPED: 3,
+    RECEIVED: 4,
+    SOLD: 5,
+    DELIVERED: 6,
+    CANCELLED: 7,
+    REJECTED: 8,
+    RETURNED: 9,
+    COMPLETED: 10,
+  };
+
 // Helper function to normalize status string
 export const normalizeStatus = (status) => {
     if (typeof status === 'string') {
@@ -28,8 +42,9 @@ export const normalizeStatus = (status) => {
         const normalizedStatus = status.toLowerCase();
         // Check if this status exists in our PRODUCT_STATUS values
         const matchingStatus = Object.values(PRODUCT_STATUS).find(s => s === normalizedStatus);
+        // If a match is found, return the status number
         if (matchingStatus) {
-        return matchingStatus;
+            return PRODUCT_STATUS_NUMBER[matchingStatus.toUpperCase()];
         }
     }
     return status;

@@ -8,13 +8,14 @@ import {
   TRACKING_CONTRACT_ADDRESS,
 } from "./constants.js";
 
-// ✅ 这是一个自定义 Hook，尽管文件名是 setWeb3，但它遵循 useXXX 的规则
 const useSetWeb3 = () => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [web3, setWeb3Instance] = useState(null);
   const [adminContract, setAdminContract] = useState(null);
   const [trackingContract, setTrackingContract] = useState(null);
   const [error, setError] = useState(null);
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
 
   const initializeWeb3 = useCallback(async () => {
     try {
@@ -103,15 +104,23 @@ const useSetWeb3 = () => {
       }
 
       try {
-        const result = await adminContract.methods
+        const receipt = await adminContract.methods
           .setProduct(productName)
           .send({
             from: accounts[0],
             gas: 200000,
           });
 
-        console.log("Product registered successfully [setWeb3.js]:", result);
-        return result;
+        // Extract the UPI from the event logs
+        const event = receipt.events?.ProductCreated;
+        if (!event) {
+          throw new Error("ProductCreated event not found in transaction receipt.");
+        }
+
+        const upi = parseInt(event.returnValues?.upi, 10);
+
+        console.log("Product registered successfully [setWeb3.js]:", upi);
+        return upi;
       } catch (err) {
         console.error("Error registering product [setWeb3.js]:", err);
         throw err;
@@ -121,7 +130,7 @@ const useSetWeb3 = () => {
   );
 
   const addStop = useCallback(
-    async (timestamp, upi, status, latitude, longitude) => {
+    async (upi, status, latitude, longitude) => {
       if (!isInitialized) await initializeWeb3();
       if (!web3 || !trackingContract) {
         throw new Error("Web3 or contract not initialized. [setWeb3.js]");
@@ -134,27 +143,48 @@ const useSetWeb3 = () => {
         );
       }
 
+      // Get current timestamp/date
+      const timestamp = Math.floor(Date.now() / 1000);
+
+    // Wrap geolocation in a Promise
+    const getCoordinates = () =>
+      new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+          reject(new Error("Geolocation is not supported by this browser."));
+        }
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+          },
+          (error) => reject(error)
+        );
+      });
+
+    try {
+      const { latitude, longitude } = await getCoordinates();
+
+      // Format latitude and longitude
       const formattedLatitude = Math.round(latitude * 1e6);
       const formattedLongitude = Math.round(longitude * 1e6);
 
-      try {
-        const result = await trackingContract.methods
-          .addStop(
-            timestamp,
-            upi,
-            status,
-            formattedLatitude,
-            formattedLongitude
-          )
-          .send({ from: accounts[0], gas: 200000 });
+      console.log("Formatted latitude [setWeb3.js]:", formattedLatitude);
+      console.log("Formatted longitude [setWeb3.js]:", formattedLongitude);
 
-        console.log("Stop added successfully [setWeb3.js]:", result);
-        return result;
-      } catch (err) {
-        console.error("Error adding stop [setWeb3.js]:", err);
-        throw err;
-      }
-    },
+      // Send the transaction
+      const result = await trackingContract.methods
+        .addStop(timestamp, upi, status, formattedLatitude, formattedLongitude)
+        .send({ from: accounts[0], gas: 200000 });
+
+      console.log("Stop added successfully [setWeb3.js]:", result);
+      return result;
+    } catch (err) {
+      console.error("Error adding stop [setWeb3.js]:", err);
+      throw err;
+    }
+  },
     [web3, trackingContract, isInitialized, initializeWeb3]
   );
 

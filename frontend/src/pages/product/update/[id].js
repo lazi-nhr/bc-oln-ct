@@ -15,7 +15,8 @@ import {
   Title,
   RegisterContainer,
 } from "../../../components/Layout";
-import { PRODUCT_STATUS, formatUPI } from "../../../hooks/constants.js";
+import { PRODUCT_STATUS, formatUPI, normalizeStatus, getStatusString } from "../../../hooks/constants.js";
+import { Loading } from "../../../components/Loading";
 
 import useSetWeb3 from "../../../hooks/setWeb3.js";
 import getWeb3 from "../../../hooks/getWeb3.js";
@@ -24,79 +25,75 @@ export const ProductUpdate = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  const [product, setProduct] = useState(null);
+  const [productData, setProductData] = useState(null);
   const [status, setStatus] = useState("");
-  const [upi, setUpi] = useState(null);
 
   const { addStop } = useSetWeb3();
   const { getProduct } = getWeb3();
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const fetchProduct = async () => {
-      if (!id) return;
+      if (!id) return; // Wait for id to be available
+      
       try {
-        const product = await getProduct(parseInt(id));
-        setProduct(product);
-        setUpi(product.upi);
+        const data = await getProduct(parseInt(id));
+        setProductData(data);
       } catch (error) {
-        alert(`Failed to fetch product: ${error.message}`);
+        console.error('Failed to fetch product:', error);
       }
     };
+
     fetchProduct();
-  }, [id]);
+  }, [getProduct, id]);
 
   const handleSelect = (event) => {
     setStatus(event.target.value);
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     if (!status) {
-      alert("Please select a status before updating.");
+      console.error("Status is missing.");
       return;
     }
 
-    const currentTimestamp = Math.floor(Date.now() / 1000);
-    setTimestamp(currentTimestamp);
+    const normalizedStatus = normalizeStatus(status);
 
-    if (!navigator.geolocation) {
-      alert("Geolocation is not supported by this browser.");
-      return;
+    try {
+
+      // Activate loading component
+      setLoading(true);
+
+      // Wait for the stop to be added
+      const result = await addStop(id, normalizedStatus);
+  
+      // Log the result to ensure it was successful
+      console.log("Stop added successfully:", result);
+
+      // Redirect to the product page
+      router.push(`/product/${id}`);
+    } catch (error) {
+      alert(`Error adding tracking stop: ${error.message}`);
     }
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        setLatitude(lat);
-        setLongitude(lon);
-
-        try {
-          await addStop(currentTimestamp, upi, status, lat, lon);
-          alert("Status updated successfully.");
-        } catch (error) {
-          alert(`Error adding tracking stop: ${error.message}`);
-        }
-      },
-      (error) => {
-        alert("Failed to get location: " + error.message);
-      }
-    );
   };
 
-  if (!product) {
+  if (!productData || loading) {
     return (
       <Layout>
         <AppBar />
         <PageWrapper>
           <Container maxWidth="1200px">
             <MainContent>
-              <Title variant="h4">Loading product info...</Title>
+              <Title variant="h4">Loading...</Title>
             </MainContent>
           </Container>
         </PageWrapper>
       </Layout>
     );
   }
+
+  const { product, trackingHistory } = productData;
 
   return (
     <Layout>
@@ -117,7 +114,9 @@ export const ProductUpdate = () => {
                 <br />
                 Product Name: {product.name}
                 <br />
-                Status: {product.status}
+                Status: {trackingHistory.length > 0 
+                  ? getStatusString(Number(trackingHistory[trackingHistory.length - 1].status))
+                  : 'Unknown'}
               </div>
               <RegisterContainer>
                 <FormControl fullWidth sx={{ marginBottom: 2 }}>

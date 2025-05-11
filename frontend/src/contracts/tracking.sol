@@ -93,4 +93,9 @@ contract Track is ITrack {
     function getProducts(address user) public view returns (uint256[] memory) {
         return _userToProducts[user];
     }
+
+    function setAdmin(address adminAddress) public returns (bool) {
+        admin = IAdmin(adminAddress);
+        return true;
+    }
 }

@@ -41,10 +41,6 @@ const getWeb3 = () => {
 
   // Get product details and tracking history for a specific UPI
   const getUser = useCallback(async (userAddress) => {
-    if (!isInitialized) {
-      throw new Error('getWeb3 not initialized');
-    }
-
     try {
       // Check cache first
       if (userCache[userAddress]) {

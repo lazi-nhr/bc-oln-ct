@@ -17,48 +17,26 @@ import {
 } from "../../components/Layout";
 import { PRODUCT_STATUS, normalizeStatus } from "../../hooks/constants.js";
 import useSetWeb3 from "../../hooks/setWeb3.js";
+import { useRouter } from "next/router";
 
 export const ProductCreation = () => {
-  const [status, setStatus] = useState("");
+  const router = useRouter();
   const [productName, setProductName] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-  const [timestamp, setTimestamp] = useState("");
 
-  const { setProduct, addStop } = useSetWeb3();
-
-  const handleSelect = (event) => {
-    setStatus(event.target.value);
-  };
+  const { setProduct } = useSetWeb3();
 
   const handleCreate = async () => {
-    if (!productName || !status) {
-      alert("Product name or status is missing.");
-      console.error("Product name or status is missing.");
+    if (!productName) {
+      console.error("Product name is missing.");
       return;
     }
-
-    // Get current timestamp/date
-    const currentTimestamp = Math.floor(Date.now() / 1000);
-    setTimestamp(currentTimestamp);
-
-    // Get current coordinates
-    if (!navigator.geolocation) {
-      alert("Geolocation is not supported by this browser.");
-      console.error("Geolocation is not supported by this browser.");
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(async (position) => {
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-      setLatitude(latitude);
-      setLongitude(longitude);
-    });
 
     // Call the setProduct function to register the product
     try {
       const upi = await setProduct(productName);
-      addStop(timestamp, upi, status, latitude, longitude);
+      router.push(`/product/${upi}`);
     } catch (error) {
       alert(`Error creating product: ${error.message}`);
     }
@@ -82,22 +60,6 @@ export const ProductCreation = () => {
                   fullWidth
                   sx={{ marginBottom: 2 }}
                 />
-                <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                  <InputLabel id="status-selector-label">Status</InputLabel>
-                  <Select
-                    labelId="status-selector-label"
-                    id="status-selector"
-                    value={status}
-                    label="Status"
-                    onChange={handleSelect}
-                  >
-                    {Object.entries(PRODUCT_STATUS).map(([key, value]) => (
-                      <MenuItem key={key} value={value}>
-                        {value.charAt(0).toUpperCase() + value.slice(1)}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
                 <Button
                   variant="contained"
                   onClick={handleCreate}

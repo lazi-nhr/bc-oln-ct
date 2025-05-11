@@ -17,6 +17,8 @@ interface IAdmin {
     function getUser(address account) external view returns (User memory);
     function setProduct(string memory productName) external returns (uint256);
     function getProduct(uint256 upi) external view returns (Product memory);
+
+    event ProductCreated(uint256 indexed upi, string name);
 }
 
 contract Admin is IAdmin {
@@ -94,6 +96,7 @@ contract Admin is IAdmin {
     {
         _productCount++;
         _products[_productCount] = Product(_productCount, productName);
+        emit ProductCreated(_productCount, productName);
         return _productCount;
     }
 
