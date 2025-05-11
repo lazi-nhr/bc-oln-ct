@@ -1,4 +1,5 @@
-import React, { use, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import AppBar from "../../../components/AppBar";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
@@ -14,31 +15,31 @@ import {
   Title,
   RegisterContainer,
 } from "../../../components/Layout";
-import {
-  PRODUCT_STATUS,
-  formatUPI,
-  getStatusColor,
-} from "../../../hooks/constants.js";
+import { PRODUCT_STATUS, formatUPI } from "../../../hooks/constants.js";
 
-import { addStop } from "../../../hooks/useSetWeb3.js";
-import { getProduct } from "../../../hooks/getWeb3.js";
+import useSetWeb3 from "../../../hooks/setWeb3.js";
+import getWeb3 from "../../../hooks/getWeb3.js";
 
 export const ProductUpdate = () => {
-  const [status, setStatus] = useState("");
+  const router = useRouter();
   const { id } = router.query;
-  const [product, setProduct] = useState(null);
 
-  // Get product information from the blockchain
+  const [product, setProduct] = useState(null);
+  const [status, setStatus] = useState("");
+  const [upi, setUpi] = useState(null);
+
+  const { addStop } = useSetWeb3();
+  const { getProduct } = getWeb3();
+
   useEffect(() => {
-    // Fetch product information from the blockchain
-    // For now, we are using a dummy product
     const fetchProduct = async () => {
+      if (!id) return;
       try {
-        // Try to get the product from the blockchain using the [id] in the URL
         const product = await getProduct(parseInt(id));
         setProduct(product);
+        setUpi(product.upi);
       } catch (error) {
-        console.error("Failed to fetch product:", error);
+        alert(`Failed to fetch product: ${error.message}`);
       }
     };
     fetchProduct();
@@ -48,35 +49,54 @@ export const ProductUpdate = () => {
     setStatus(event.target.value);
   };
 
-  const handleUpdate = (value) => {
+  const handleUpdate = () => {
     if (!status) {
-      console.error("Status is missing.");
+      alert("Please select a status before updating.");
       return;
     }
 
-    // Get current timestamp/date
     const currentTimestamp = Math.floor(Date.now() / 1000);
     setTimestamp(currentTimestamp);
 
-    // Get current coordinates
     if (!navigator.geolocation) {
-      console.error("Geolocation is not supported by this browser.");
+      alert("Geolocation is not supported by this browser.");
       return;
     }
-    navigator.geolocation.getCurrentPosition(async (position) => {
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-      setLatitude(latitude);
-      setLongitude(longitude);
-    });
 
-    // Call the setProduct function to register the product
-    try {
-      addStop(timestamp, upi, status, latitude, longitude);
-    } catch (error) {
-      console.error("Error adding tracking stop:", error);
-    }
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        setLatitude(lat);
+        setLongitude(lon);
+
+        try {
+          await addStop(currentTimestamp, upi, status, lat, lon);
+          alert("Status updated successfully.");
+        } catch (error) {
+          alert(`Error adding tracking stop: ${error.message}`);
+        }
+      },
+      (error) => {
+        alert("Failed to get location: " + error.message);
+      }
+    );
   };
+
+  if (!product) {
+    return (
+      <Layout>
+        <AppBar />
+        <PageWrapper>
+          <Container maxWidth="1200px">
+            <MainContent>
+              <Title variant="h4">Loading product info...</Title>
+            </MainContent>
+          </Container>
+        </PageWrapper>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
