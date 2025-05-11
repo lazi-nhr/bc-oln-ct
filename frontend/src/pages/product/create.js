@@ -1,24 +1,67 @@
-import React, { useState } from 'react';
-import AppBar from '../../components/AppBar';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Container from '@mui/material/Container';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import { Layout, PageWrapper, MainContent, ColumnSection, Title, RegisterContainer } from '../../components/Layout';
+import React, { useState } from "react";
+import AppBar from "../../components/AppBar";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Container from "@mui/material/Container";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import {
+  Layout,
+  PageWrapper,
+  MainContent,
+  ColumnSection,
+  Title,
+  RegisterContainer,
+} from "../../components/Layout";
+import { PRODUCT_STATUS, normalizeStatus } from "../../hooks/constants.js";
+import useSetWeb3 from "../../hooks/setWeb3.js";
 
 export const ProductCreation = () => {
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState("");
+  const [productName, setProductName] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
+  const [timestamp, setTimestamp] = useState("");
+
+  const { setProduct, addStop } = useSetWeb3();
 
   const handleSelect = (event) => {
     setStatus(event.target.value);
   };
 
-  const handleCreate = (value) => {
-    console.log('Searching for:', value);
-    // Add your search logic here
+  const handleCreate = async () => {
+    if (!productName || !status) {
+      alert("Product name or status is missing.");
+      console.error("Product name or status is missing.");
+      return;
+    }
+
+    // Get current timestamp/date
+    const currentTimestamp = Math.floor(Date.now() / 1000);
+    setTimestamp(currentTimestamp);
+
+    // Get current coordinates
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by this browser.");
+      console.error("Geolocation is not supported by this browser.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      setLatitude(latitude);
+      setLongitude(longitude);
+    });
+
+    // Call the setProduct function to register the product
+    try {
+      const upi = await setProduct(productName);
+      addStop(timestamp, upi, status, latitude, longitude);
+    } catch (error) {
+      alert(`Error creating product: ${error.message}`);
+    }
   };
 
   return (
@@ -31,13 +74,16 @@ export const ProductCreation = () => {
               <Title variant="h2">Create a new product</Title>
               <RegisterContainer>
                 <TextField
-                  id="outlined-basic"
+                  id="product-name"
                   label="Product Name"
                   variant="outlined"
+                  value={productName}
+                  onChange={(e) => setProductName(e.target.value)}
                   fullWidth
+                  sx={{ marginBottom: 2 }}
                 />
-                <FormControl fullWidth>
-                  <InputLabel id="status-selector">Status</InputLabel>
+                <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                  <InputLabel id="status-selector-label">Status</InputLabel>
                   <Select
                     labelId="status-selector-label"
                     id="status-selector"
@@ -45,10 +91,11 @@ export const ProductCreation = () => {
                     label="Status"
                     onChange={handleSelect}
                   >
-                    <MenuItem value={10}>New</MenuItem>
-                    <MenuItem value={20}>Shipped</MenuItem>
-                    <MenuItem value={30}>Sold</MenuItem>
-                    <MenuItem value={40}>Bought</MenuItem>
+                    {Object.entries(PRODUCT_STATUS).map(([key, value]) => (
+                      <MenuItem key={key} value={value}>
+                        {value.charAt(0).toUpperCase() + value.slice(1)}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
                 <Button
@@ -56,10 +103,10 @@ export const ProductCreation = () => {
                   onClick={handleCreate}
                   sx={{
                     gap: 1,
-                    padding: '8px 24px',
-                    textTransform: 'none',
-                    fontSize: '1rem',
-                    whiteSpace: 'nowrap',
+                    padding: "8px 24px",
+                    textTransform: "none",
+                    fontSize: "1rem",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   Create
