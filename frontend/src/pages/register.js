@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import AppBar from "../components/AppBar";
 import Button from "@mui/material/Button";
@@ -17,21 +15,16 @@ import {
   Title,
   RegisterContainer,
 } from "../components/Layout";
-import { ethers } from "ethers";
-import AdminAbi from "../contracts/adminAbi.json";
-import { ADMIN_CONTRACT_ADDRESS } from "../hooks/constants.js";
+import { roleOptions } from "../hooks/constants.js";
+import useSetWeb3 from "../hooks/setWeb3.js";
+import { useRouter } from "next/router";
 
 export const Register = () => {
   const [role, setRole] = useState(""); // For storing the role
   const [username, setUsername] = useState(""); // For storing the username
+  const router = useRouter();
 
-  const roleOptions = [
-    { value: 1, label: "Buyer" },
-    { value: 2, label: "Retailer" },
-    { value: 3, label: "Distributor" },
-    { value: 4, label: "Manufacturer" },
-    { value: 5, label: "Quality Control" },
-  ];
+  const { setUser } = useSetWeb3();
 
   // Handle the role selection change
   const handleSelect = (event) => {
@@ -40,42 +33,16 @@ export const Register = () => {
 
   // Handle the registration logic
   const handleRegister = async () => {
-    if (!username || !role) {
-      alert("Please enter a username and select a role.");
+    if (!role || !username) {
+      alert("Role or username is missing.");
       return;
     }
-
-    // Check if MetaMask is installed
-    if (!window.ethereum) {
-      alert("Please install MetaMask to register.");
-      return;
-    }
-
     try {
-      // Request account access if needed
-      await window.ethereum.request({ method: "eth_requestAccounts" });
-
-      // Initialize the provider and signer
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-
-      // Create the contract instance
-      const adminContract = new ethers.Contract(
-        ADMIN_CONTRACT_ADDRESS,
-        AdminAbi,
-        signer
-      );
-
-      // Call the contract function to register the user
-      const tx = await adminContract.setUser(username, role);
-      await tx.wait(); // Wait for the transaction to be mined
-
-      // Success message
-      alert("Registration successful!");
+      const result = await setUser(username, role); // ✅ call setUser from hook
+      alert("User registered successfully.");
+      router.push(`/overview`);
     } catch (error) {
-      // Error handling
-      console.error("Registration failed:", error);
-      alert("Registration failed: " + (error.data?.message || error.message));
+      alert(`Failed to register user: ${error.message}`);
     }
   };
 
