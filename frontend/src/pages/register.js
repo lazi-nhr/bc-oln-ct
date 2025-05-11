@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import AppBar from "../components/AppBar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -18,13 +16,15 @@ import {
   RegisterContainer,
 } from "../components/Layout";
 import { roleOptions } from "../hooks/constants.js";
-import { setUser } from "../hooks/setWeb3.js";
+import useSetWeb3 from "../hooks/setWeb3.js";
 import { useRouter } from "next/router";
 
 export const Register = () => {
   const [role, setRole] = useState(""); // For storing the role
   const [username, setUsername] = useState(""); // For storing the username
   const router = useRouter();
+
+  const { setUser } = useSetWeb3();
 
   // Handle the role selection change
   const handleSelect = (event) => {
@@ -34,18 +34,15 @@ export const Register = () => {
   // Handle the registration logic
   const handleRegister = async () => {
     if (!role || !username) {
-      console.error("Role or username is missing.");
+      alert("Role or username is missing.");
       return;
     }
-    // Call the setUser
     try {
-      result = await setUser(username, role);
-      console.log("User registered successfully:", result);
-      // Direct to overview page
+      const result = await setUser(username, role); // ✅ call setUser from hook
+      alert("User registered successfully.");
       router.push(`/overview`);
-    }
-    catch (error) {
-      console.error("Failed to register user:", error);
+    } catch (error) {
+      alert(`Failed to register user: ${error.message}`);
     }
   };
 

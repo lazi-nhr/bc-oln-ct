@@ -20,7 +20,7 @@ import {
   getStatusColor,
 } from "../../../hooks/constants.js";
 
-import { addStop } from "../../../hooks/setWeb3.js";
+import { addStop } from "../../../hooks/useSetWeb3.js";
 import { getProduct } from "../../../hooks/getWeb3.js";
 
 export const ProductUpdate = () => {
@@ -33,7 +33,6 @@ export const ProductUpdate = () => {
     // Fetch product information from the blockchain
     // For now, we are using a dummy product
     const fetchProduct = async () => {
-      
       try {
         // Try to get the product from the blockchain using the [id] in the URL
         const product = await getProduct(parseInt(id));
@@ -44,7 +43,6 @@ export const ProductUpdate = () => {
     };
     fetchProduct();
   }, [id]);
-        
 
   const handleSelect = (event) => {
     setStatus(event.target.value);
@@ -65,20 +63,17 @@ export const ProductUpdate = () => {
       console.error("Geolocation is not supported by this browser.");
       return;
     }
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-        setLatitude(latitude);
-        setLongitude(longitude);
-      }
-    );
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      setLatitude(latitude);
+      setLongitude(longitude);
+    });
 
     // Call the setProduct function to register the product
     try {
       addStop(timestamp, upi, status, latitude, longitude);
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error adding tracking stop:", error);
     }
   };

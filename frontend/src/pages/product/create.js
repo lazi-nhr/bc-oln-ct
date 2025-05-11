@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import AppBar from "../../components/AppBar";
 import Button from "@mui/material/Button";
@@ -18,7 +16,7 @@ import {
   RegisterContainer,
 } from "../../components/Layout";
 import { PRODUCT_STATUS, normalizeStatus } from "../../hooks/constants.js";
-import { setProduct, addStop } from "../../hooks/setWeb3.js";
+import { setProduct, addStop } from "../../hooks/useSetWeb3.js";
 
 export const ProductCreation = () => {
   const [status, setStatus] = useState("");
@@ -46,21 +44,18 @@ export const ProductCreation = () => {
       console.error("Geolocation is not supported by this browser.");
       return;
     }
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-        setLatitude(latitude);
-        setLongitude(longitude);
-      }
-    );
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      setLatitude(latitude);
+      setLongitude(longitude);
+    });
 
     // Call the setProduct function to register the product
     try {
       const upi = await setProduct(productName);
       addStop(timestamp, upi, status, latitude, longitude);
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error creating product:", error);
     }
   };
