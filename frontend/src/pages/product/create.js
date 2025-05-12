@@ -22,8 +22,8 @@ import { useRouter } from "next/router";
 export const ProductCreation = () => {
   const router = useRouter();
   const [productName, setProductName] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
+
+  const [loading, setLoading] = useState(false);
 
   const { setProduct } = useSetWeb3();
 
@@ -35,12 +35,29 @@ export const ProductCreation = () => {
 
     // Call the setProduct function to register the product
     try {
+      setLoading(true);
       const upi = await setProduct(productName);
+      setLoading(false);
       router.push(`/product/${upi}`);
     } catch (error) {
       alert(`Error creating product: ${error.message}`);
     }
   };
+
+  if (loading) {
+    return (
+      <Layout>
+        <AppBar />
+        <PageWrapper>
+          <Container maxWidth="1200px">
+            <MainContent>
+              <Loading />
+            </MainContent>
+          </Container>
+        </PageWrapper>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

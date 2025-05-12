@@ -71,6 +71,9 @@ export const ProductUpdate = () => {
       // Log the result to ensure it was successful
       console.log("Stop added successfully:", result);
 
+      // Deactivate loading component
+      setLoading(false);
+
       // Redirect to the product page
       router.push(`/product/${id}`);
     } catch (error) {
@@ -85,7 +88,7 @@ export const ProductUpdate = () => {
         <PageWrapper>
           <Container maxWidth="1200px">
             <MainContent>
-              <Title variant="h4">Loading...</Title>
+              <Loading />
             </MainContent>
           </Container>
         </PageWrapper>
