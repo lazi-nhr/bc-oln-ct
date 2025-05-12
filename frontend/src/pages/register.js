@@ -16,15 +16,18 @@ import {
   RegisterContainer,
 } from "../components/Layout";
 import { roleOptions } from "../hooks/constants.js";
-import useSetWeb3 from "../hooks/setWeb3.js";
+import setWeb3 from "../hooks/setWeb3.js";
 import { useRouter } from "next/router";
+import { Loading } from "../../../components/Loading";
 
 export const Register = () => {
   const [role, setRole] = useState(""); // For storing the role
   const [username, setUsername] = useState(""); // For storing the username
   const router = useRouter();
 
-  const { setUser } = useSetWeb3();
+  const { setUser } = setWeb3();
+
+  const [loading, setLoading] = useState(false);
 
   // Handle the role selection change
   const handleSelect = (event) => {
@@ -34,17 +37,35 @@ export const Register = () => {
   // Handle the registration logic
   const handleRegister = async () => {
     if (!role || !username) {
-      alert("Role or username is missing.");
+      console.error("Role or username is missing.");
       return;
     }
     try {
-      const result = await setUser(username, role); // ✅ call setUser from hook
-      alert("User registered successfully.");
+      setLoading(true);
+      const result = await setUser(username, role);
+      console.log("User registered successfully:", result);
+      setLoading(false);
       router.push(`/overview`);
     } catch (error) {
-      alert(`Failed to register user: ${error.message}`);
+      console.error("Error registering user:", error);
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <Layout>
+        <AppBar />
+        <PageWrapper>
+          <Container maxWidth="1200px">
+            <MainContent>
+              <Loading />
+            </MainContent>
+          </Container>
+        </PageWrapper>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

@@ -18,7 +18,7 @@ import {
 import { PRODUCT_STATUS, formatUPI, normalizeStatus, getStatusString } from "../../../hooks/constants.js";
 import { Loading } from "../../../components/Loading";
 
-import useSetWeb3 from "../../../hooks/setWeb3.js";
+import setWeb3 from "../../../hooks/setWeb3.js";
 import getWeb3 from "../../../hooks/getWeb3.js";
 
 export const ProductUpdate = () => {
@@ -28,7 +28,7 @@ export const ProductUpdate = () => {
   const [productData, setProductData] = useState(null);
   const [status, setStatus] = useState("");
 
-  const { addStop } = useSetWeb3();
+  const { addStop } = setWeb3();
   const { getProduct } = getWeb3();
 
   const [loading, setLoading] = useState(false);
@@ -77,7 +77,8 @@ export const ProductUpdate = () => {
       // Redirect to the product page
       router.push(`/product/${id}`);
     } catch (error) {
-      alert(`Error adding tracking stop: ${error.message}`);
+      console.error("Error adding tracking stop:", error);
+      setLoading(false);
     }
   };
 

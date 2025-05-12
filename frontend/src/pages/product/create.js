@@ -15,8 +15,7 @@ import {
   Title,
   RegisterContainer,
 } from "../../components/Layout";
-import { PRODUCT_STATUS, normalizeStatus } from "../../hooks/constants.js";
-import useSetWeb3 from "../../hooks/setWeb3.js";
+import setWeb3 from "../../hooks/setWeb3.js";
 import { useRouter } from "next/router";
 
 export const ProductCreation = () => {
@@ -25,7 +24,7 @@ export const ProductCreation = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const { setProduct } = useSetWeb3();
+  const { setProduct } = setWeb3();
 
   const handleCreate = async () => {
     if (!productName) {
@@ -40,7 +39,8 @@ export const ProductCreation = () => {
       setLoading(false);
       router.push(`/product/${upi}`);
     } catch (error) {
-      alert(`Error creating product: ${error.message}`);
+      console.error("Error creating product:", error);
+      setLoading(false);
     }
   };
 

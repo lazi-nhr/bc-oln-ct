@@ -3,19 +3,16 @@ import Web3 from "web3";
 import adminAbi from "../contracts/adminAbi.json";
 import trackingAbi from "../contracts/trackingAbi.json";
 import {
-  INFURA_URL,
   ADMIN_CONTRACT_ADDRESS,
   TRACKING_CONTRACT_ADDRESS,
 } from "./constants.js";
 
-const useSetWeb3 = () => {
+const setWeb3 = () => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [web3, setWeb3Instance] = useState(null);
   const [adminContract, setAdminContract] = useState(null);
   const [trackingContract, setTrackingContract] = useState(null);
   const [error, setError] = useState(null);
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
 
   const initializeWeb3 = useCallback(async () => {
     try {
@@ -146,45 +143,45 @@ const useSetWeb3 = () => {
       // Get current timestamp/date
       const timestamp = Math.floor(Date.now() / 1000);
 
-    // Wrap geolocation in a Promise
-    const getCoordinates = () =>
-      new Promise((resolve, reject) => {
-        if (!navigator.geolocation) {
-          reject(new Error("Geolocation is not supported by this browser."));
-        }
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            resolve({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            });
-          },
-          (error) => reject(error)
-        );
-      });
+      // Wrap geolocation in a Promise
+      const getCoordinates = () =>
+        new Promise((resolve, reject) => {
+          if (!navigator.geolocation) {
+            reject(new Error("Geolocation is not supported by this browser."));
+          }
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              resolve({
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+              });
+            },
+            (error) => reject(error)
+          );
+        });
 
-    try {
-      const { latitude, longitude } = await getCoordinates();
+      try {
+        const { latitude, longitude } = await getCoordinates();
 
-      // Format latitude and longitude
-      const formattedLatitude = Math.round(latitude * 1e6);
-      const formattedLongitude = Math.round(longitude * 1e6);
+        // Format latitude and longitude
+        const formattedLatitude = Math.round(latitude * 1e6);
+        const formattedLongitude = Math.round(longitude * 1e6);
 
-      console.log("Formatted latitude [setWeb3.js]:", formattedLatitude);
-      console.log("Formatted longitude [setWeb3.js]:", formattedLongitude);
+        console.log("Formatted latitude [setWeb3.js]:", formattedLatitude);
+        console.log("Formatted longitude [setWeb3.js]:", formattedLongitude);
 
-      // Send the transaction
-      const result = await trackingContract.methods
-        .addStop(timestamp, upi, status, formattedLatitude, formattedLongitude)
-        .send({ from: accounts[0], gas: 200000 });
+        // Send the transaction
+        const result = await trackingContract.methods
+          .addStop(timestamp, upi, status, formattedLatitude, formattedLongitude)
+          .send({ from: accounts[0], gas: 200000 });
 
-      console.log("Stop added successfully [setWeb3.js]:", result);
-      return result;
-    } catch (err) {
-      console.error("Error adding stop [setWeb3.js]:", err);
-      throw err;
-    }
-  },
+        console.log("Stop added successfully [setWeb3.js]:", result);
+        return result;
+      } catch (err) {
+        console.error("Error adding stop [setWeb3.js]:", err);
+        throw err;
+      }
+    },
     [web3, trackingContract, isInitialized, initializeWeb3]
   );
 
@@ -199,4 +196,4 @@ const useSetWeb3 = () => {
   };
 };
 
-export default useSetWeb3;
+export default setWeb3;
