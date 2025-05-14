@@ -58,8 +58,8 @@ contract Track is ITrack {
         _;
     }
 
-    constructor(address adminAddress) {
-        admin = IAdmin(adminAddress);
+    constructor() {
+        admin = IAdmin(0x7CbEd915f6DdECA06B72f9553990De4Be1c9ae78);
     }
 
     function addStop(

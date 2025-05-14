@@ -12,7 +12,7 @@ const getWeb3 = () => {
   const [isInitialized, setIsInitialized] = useState(false);
   const { setEthereumAddress } = useEthereumAddress();
   
-  // Add caches for users and products
+  // Add caches for users and products to reduce API calls
   const [userCache, setUserCache] = useState({});
   const [productCache, setProductCache] = useState({});
 
@@ -44,7 +44,7 @@ const getWeb3 = () => {
     try {
       // Check cache first
       if (userCache[userAddress]) {
-        console.log('Using cached user data for:', userAddress);
+        console.log('Using cached user data for:', userCache[userAddress]);
         return userCache[userAddress];
       }
 
@@ -63,7 +63,7 @@ const getWeb3 = () => {
       console.error('Error fetching user (', userAddress, '):', error);
       throw error;
     }
-  }, [adminContract, isInitialized, web3, userCache]);
+  }, [adminContract, isInitialized, web3, userCache, setEthereumAddress]);
 
   const getProduct = useCallback(async (upi) => {
     if (!isInitialized) {
@@ -111,8 +111,6 @@ const getWeb3 = () => {
 
       // Ensure the address is properly formatted
       const checksumAddress = web3.utils.toChecksumAddress(userAddress);
-      setEthereumAddress(checksumAddress);
-      console.log('checksumAddress', checksumAddress);
       
       // Get all products from a user
       const products = await trackingContract.methods.getProducts(checksumAddress).call();

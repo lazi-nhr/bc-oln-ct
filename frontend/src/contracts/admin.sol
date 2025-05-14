@@ -66,9 +66,7 @@ contract Admin is IAdmin {
     }
 
     constructor() {
-        setUser("lazi", ROLE_PRODUCER);
-        setProduct("Banana");
-        setProduct("Apple");
+
     }
 
     function setUser(string memory username, uint8 role)

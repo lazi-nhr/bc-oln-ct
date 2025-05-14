@@ -1,4 +1,3 @@
-// EthereumAddressContext.js
 import { createContext, useContext, useState } from 'react';
 
 const EthereumAddressContext = createContext(null);

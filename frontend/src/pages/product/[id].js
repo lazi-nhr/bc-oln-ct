@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import { styled } from '@mui/material/styles';
 import { Layout, PageWrapper, MainContent, ColumnSection, Title, Separator, RegisterContainer } from '../../components/Layout';
-import { formatUPI, getStatusColor, getStatusString } from '../../data/dummyProducts';
+import { formatUPI, getStatusColor, getStatusString, truncateAddress } from '../../hooks/constants.js';
 import getWeb3 from '../../hooks/getWeb3';
 import Loading from '../../components/Loading';
 
@@ -34,9 +34,8 @@ const ScrollableContainer = styled('div')(({ theme }) => ({
 export const ProductDetails = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { getProduct, getUser } = getWeb3();
+  const { getProduct } = getWeb3();
   const [productData, setProductData] = useState(null);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -45,10 +44,8 @@ export const ProductDetails = () => {
       try {
         const data = await getProduct(parseInt(id));
         setProductData(data);
-        setError(null);
       } catch (error) {
         console.error('Failed to fetch product:', error);
-        setError('Failed to fetch product details. Please make sure the product ID exists.');
       }
     };
 
@@ -59,13 +56,7 @@ export const ProductDetails = () => {
     router.push(`/product/update/${id}`);
   };
 
-  // Function to truncate the address for better readability
-  const truncateAddress = (account) => {
-    if (!account) return '';
-    return account.slice(0, 6) + '...' + account.slice(-4);
-  };
-
-  if (error || !id || !productData) {
+  if (!id || !productData) {
     return (
       <Layout>
         <AppBar />
@@ -115,8 +106,6 @@ export const ProductDetails = () => {
               <ScrollableContainer>
                 {trackingHistory.slice().reverse().map((stop, index) => {
                   const statusString = getStatusString(Number(stop.status));
-                  const username = getUser(stop.user).name;
-                  console.log('username:', username);
                   const date = new Date(Number(stop.time) * 1000);
                   const formattedDate = date.toLocaleDateString('de-DE', {
                     day: '2-digit',
@@ -138,6 +127,7 @@ export const ProductDetails = () => {
                         <strong style={{ color: getStatusColor(statusString) }}>
                           {statusString.toUpperCase()} 
                         </strong>
+                        {' '}
                         <span style={{ fontSize: '0.9em', color: '#888' }}>
                           ({formattedDate})
                         </span>
@@ -145,7 +135,7 @@ export const ProductDetails = () => {
                         <i>Location: {coordinates}</i>
                         <br />
                         <span style={{ fontSize: '0.9em', color: '#888' }}>
-                          {truncateAddress(stop.user)} ({username})
+                          {truncateAddress(stop.user)}
                         </span>
                       </div>
                     </div>

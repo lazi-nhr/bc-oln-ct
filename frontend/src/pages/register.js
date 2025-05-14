@@ -15,10 +15,10 @@ import {
   Title,
   RegisterContainer,
 } from "../components/Layout";
-import { roleOptions } from "../hooks/constants.js";
+import { USER_ROLE, normalizeRole } from "../hooks/constants.js";
 import setWeb3 from "../hooks/setWeb3.js";
 import { useRouter } from "next/router";
-import { Loading } from "../../../components/Loading";
+import { Loading } from "../components/Loading";
 
 export const Register = () => {
   const [role, setRole] = useState(""); // For storing the role
@@ -37,17 +37,20 @@ export const Register = () => {
   // Handle the registration logic
   const handleRegister = async () => {
     if (!role || !username) {
-      console.error("Role or username is missing.");
+      alert("Please fill in all fields.");
       return;
     }
+
+    const normalizedRole = normalizeRole(role);
+
     try {
       setLoading(true);
-      const result = await setUser(username, role);
+      const result = await setUser(username, normalizedRole);
       console.log("User registered successfully:", result);
-      setLoading(false);
       router.push(`/overview`);
     } catch (error) {
       console.error("Error registering user:", error);
+    } finally {
       setLoading(false);
     }
   };
@@ -56,13 +59,7 @@ export const Register = () => {
     return (
       <Layout>
         <AppBar />
-        <PageWrapper>
-          <Container maxWidth="1200px">
-            <MainContent>
-              <Loading />
-            </MainContent>
-          </Container>
-        </PageWrapper>
+        <Loading />
       </Layout>
     );
   }
@@ -94,9 +91,9 @@ export const Register = () => {
                     label="Role"
                     onChange={handleSelect}
                   >
-                    {roleOptions.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
+                    {Object.entries(USER_ROLE).map(([key, value]) => (
+                      <MenuItem key={key} value={value}>
+                        {value.charAt(0).toUpperCase() + value.slice(1)}
                       </MenuItem>
                     ))}
                   </Select>

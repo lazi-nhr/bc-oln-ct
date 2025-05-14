@@ -5,25 +5,21 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Search from '../components/Search';
 import { Layout, PageWrapper, MainContent, ColumnSection, Title, Separator } from '../components/Layout';
-import { getUser } from "../hooks/getWeb3.js";
+import getWeb3 from "../hooks/getWeb3.js";
 
 export const Home = () => {
   const router = useRouter();
-  const [ethereumAddress, setEthereumAddress] = useState(null);
+  const { getUser } = getWeb3();
 
   const handleConnect = async () => {
     if (window.ethereum) {
       try {
         // Request account access if needed
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        // You can now use accounts[0] in your app (e.g., set state)
-        setEthereumAddress(accounts[0]);
-        // accounts[0] is the user's wallet address
-        console.log('Connected account:', ethereumAddress);
         
         // Call the getUser function to check if the user is registered
-        const user = await getUser(ethereumAddress);
-        console.log('User:', user);
+        const user = await getUser(accounts[0]);
+        console.log('Username:', user.username);
 
         // Check if the user is registered
         if (user.role === 0) {
@@ -37,10 +33,10 @@ export const Home = () => {
         }
 
       } catch (error) {
-        console.error('User rejected the request');
+        console.error('User rejected the request:', error);
       }
     } else {
-      console.error('Please install MetaMask!');
+      alert('Please install MetaMask on a compatible browser (Google Chrome or Mozilla Firefox).');
     }
   };
 

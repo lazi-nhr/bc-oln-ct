@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useEthereumAddress } from '../contexts/EthereumAddressContext';
 import Web3 from 'web3';
 import adminAbi from '../contracts/adminAbi.json';
@@ -10,7 +10,6 @@ const useWeb3 = () => {
   const [account, setAccount] = useState(null);
   const [adminContract, setAdminContract] = useState(null);
   const [trackingContract, setTrackingContract] = useState(null);
-  const [products, setProducts] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const { setEthereumAddress } = useEthereumAddress();
 
@@ -95,44 +94,11 @@ const useWeb3 = () => {
     };
   }, []);
 
-  const getProduct = useCallback(async (upi) => {
-    if (!isInitialized) {
-      throw new Error('Web3 not fully initialized. Please ensure MetaMask is connected.');
-    }
-
-    try {
-      const product = await adminContract.methods.getProduct(upi).call();
-      const trackingHistory = await trackingContract.methods.getStops(upi).call();
-      console.log('product data:', product);
-      console.log('tracking history:', trackingHistory);
-      return { product, trackingHistory };
-    } catch (error) {
-      console.error('Error fetching product:', error);
-      throw error;
-    }
-  }, [adminContract, trackingContract, isInitialized]);
-
-  const getProducts = useCallback(async () => {
-    if (!isInitialized) {
-      throw new Error('Web3 not fully initialized. Please ensure MetaMask is connected.');
-    }
-
-    try {
-      return await trackingContract.methods.getProducts(account).call();
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      throw error;
-    }
-  }, [adminContract, account, isInitialized]);
-
   return { 
-    web3, 
-    account, 
-    adminContract, 
-    trackingContract, 
-    products, 
-    getProduct,
-    getProducts,
+    web3,
+    account,
+    adminContract,
+    trackingContract,
     isInitialized
   };
 };

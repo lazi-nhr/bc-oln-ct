@@ -1,8 +1,7 @@
-export const ADMIN_CONTRACT_ADDRESS = "0x7DccC38081fc48f3D7d7FAeEa377631d7B19DD81";
-export const TRACKING_CONTRACT_ADDRESS = "0xE403146E780A988FbCD24359e8374422F37d9492";
+export const ADMIN_CONTRACT_ADDRESS = "0x7CbEd915f6DdECA06B72f9553990De4Be1c9ae78";
+export const TRACKING_CONTRACT_ADDRESS = "0x9d550392AC753030f793F856B0d9E9331e565bEf";
 export const DEFAULT_ADDRESS = "0xA5f11536E55f1D77b8033F56C42C5c7aEE1DA9EB";
 export const SEPOLIA_CHAIN_ID = "0xaa36a7";
-export const SEPOLIA_RPC_URL = "https://sepolia.infura.io/v3/63703b3efd0948c2adf595d101b8d981";
 export const INFURA_URL = "https://sepolia.infura.io/v3/63703b3efd0948c2adf595d101b8d981";
 export const INFURA_API_KEY = "63703b3efd0948c2adf595d101b8d981";
 
@@ -19,7 +18,7 @@ export const PRODUCT_STATUS = {
     REJECTED: 'rejected',
     RETURNED: 'returned',
     COMPLETED: 'completed',
-  };
+};
 
 export const PRODUCT_STATUS_NUMBER = {
     NEW: 0,
@@ -33,7 +32,7 @@ export const PRODUCT_STATUS_NUMBER = {
     REJECTED: 8,
     RETURNED: 9,
     COMPLETED: 10,
-  };
+};
 
 // Helper function to normalize status string
 export const normalizeStatus = (status) => {
@@ -52,41 +51,44 @@ export const normalizeStatus = (status) => {
 
 // Numeric status mapping (matching smart contract values)
 export const NUMERIC_STATUS = {
-0: PRODUCT_STATUS.NEW,
-1: PRODUCT_STATUS.PROCESSED,
-2: PRODUCT_STATUS.PRODUCED,
-3: PRODUCT_STATUS.SHIPPED,
-4: PRODUCT_STATUS.RECEIVED,
-5: PRODUCT_STATUS.SOLD,
-6: PRODUCT_STATUS.DELIVERED,
-7: PRODUCT_STATUS.CANCELLED,
-8: PRODUCT_STATUS.REJECTED,
-9: PRODUCT_STATUS.RETURNED,
-10: PRODUCT_STATUS.COMPLETED,
+    0: PRODUCT_STATUS.NEW,
+    1: PRODUCT_STATUS.PROCESSED,
+    2: PRODUCT_STATUS.PRODUCED,
+    3: PRODUCT_STATUS.SHIPPED,
+    4: PRODUCT_STATUS.RECEIVED,
+    5: PRODUCT_STATUS.SOLD,
+    6: PRODUCT_STATUS.DELIVERED,
+    7: PRODUCT_STATUS.CANCELLED,
+    8: PRODUCT_STATUS.REJECTED,
+    9: PRODUCT_STATUS.RETURNED,
+    10: PRODUCT_STATUS.COMPLETED,
 };
 
 // Helper function to convert numeric status to string
 export const getStatusString = (status) => {
-if (typeof status === 'number') {
-    return NUMERIC_STATUS[status] || 'unknown';
-}
-return normalizeStatus(status) || 'unknown';
+    if (typeof status === 'number') {
+        return NUMERIC_STATUS[status] || 'unknown';
+    }
+    return normalizeStatus(status) || 'unknown';
 };
 
 // Helper function to format UPI with leading zeros
 export const formatUPI = (upi) => String(upi).padStart(5, '0');
 
+// Function to truncate the address for better readability
+export const truncateAddress = (account) => {
+    if (!account) return '';
+    return account.slice(0, 6) + '...' + account.slice(-4);
+};
+
 // Helper function to get status color
 export const getStatusColor = (status) => {
     // Handle undefined or null status
     if (!status && status !== 0) {
-        return '#757575'; // Grey for undefined/null status
+        return '#000000';
     }
 
-    // Normalize the status
-    const normalizedStatus = normalizeStatus(status);
-
-    switch (normalizedStatus) {
+    switch (status) {
         case PRODUCT_STATUS.NEW:
         return '#00C853'; // Bright Green
         case PRODUCT_STATUS.PROCESSED:
@@ -110,17 +112,9 @@ export const getStatusColor = (status) => {
         case PRODUCT_STATUS.COMPLETED:
         return '#00C853'; // Bright Green
         default:
-        return '#757575'; // Grey
+        return '#000000';
     }
 };
-
-export const roleOptions = [
-    { value: 1, label: "Producer" },
-    { value: 2, label: "Retailer" },
-    { value: 3, label: "Shipper" },
-    { value: 4, label: "Customer" },
-];
-
 
 // User Role options
 export const USER_ROLE = {
@@ -128,8 +122,14 @@ export const USER_ROLE = {
     RETAILER: 'Retailer',
     SHIPPER: 'Shipper',
     CUSTOMER: 'Customer',
-  };
+};
 
+export const USER_ROLE_NUMBER = {
+    PRODUCER: 1,
+    RETAILER: 2,
+    SHIPPER: 3,
+    CUSTOMER: 4,
+};
 
 // Numeric role mapping
 export const NUMERIC_ROLE = {
@@ -137,4 +137,19 @@ export const NUMERIC_ROLE = {
     2: USER_ROLE.RETAILER,
     3: USER_ROLE.SHIPPER,
     4: USER_ROLE.CUSTOMER,
-    };
+};
+
+// Helper function to normalize role string
+export const normalizeRole = (role) => {
+    if (typeof role === 'string') {
+        // Convert to lowercase for comparison
+        const normalizedRole = role.toLowerCase();
+        // Check if this status exists in the USER_ROLE values
+        const matchingRole = Object.values(USER_ROLE).find(s => s === normalizedRole);
+        // If a match is found, return the role number
+        if (matchingRole) {
+            return USER_ROLE_NUMBER[matchingRole.toUpperCase()];
+        }
+    }
+    return role;
+};

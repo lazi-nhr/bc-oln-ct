@@ -3,10 +3,6 @@ import AppBar from "../../components/AppBar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Container from "@mui/material/Container";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
 import {
   Layout,
   PageWrapper,
@@ -28,7 +24,7 @@ export const ProductCreation = () => {
 
   const handleCreate = async () => {
     if (!productName) {
-      console.error("Product name is missing.");
+      alert("Please enter a product name.");
       return;
     }
 
@@ -37,7 +33,7 @@ export const ProductCreation = () => {
       setLoading(true);
       const upi = await setProduct(productName);
       setLoading(false);
-      router.push(`/product/${upi}`);
+      router.push(`/product/update/${upi}`);
     } catch (error) {
       console.error("Error creating product:", error);
       setLoading(false);
@@ -48,13 +44,7 @@ export const ProductCreation = () => {
     return (
       <Layout>
         <AppBar />
-        <PageWrapper>
-          <Container maxWidth="1200px">
-            <MainContent>
-              <Loading />
-            </MainContent>
-          </Container>
-        </PageWrapper>
+        <Loading />
       </Layout>
     );
   }

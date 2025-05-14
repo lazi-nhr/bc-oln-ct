@@ -11,19 +11,13 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Link from 'next/link';
 import useWeb3 from '../hooks/useWeb3';
+import { truncateAddress } from '../hooks/constants';
 
 const pagesInitialized = ['Overview', 'Register', 'product/create', 'product/1', 'product/update/1'];
 const pagesNotInitialized = ['Overview', 'Register', 'product/create', 'product/1', 'product/update/1'];
 
 function ResponsiveAppBar() {
     const { account } = useWeb3();
-
-
-    // Function to truncate the address for better readability
-    const truncateAddress = (account) => {
-        if (!account) return '';
-        return account.slice(0, 6) + '...' + account.slice(-4);
-    };
 
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
@@ -126,7 +120,7 @@ function ResponsiveAppBar() {
                     </Box>
                     <Box sx={{ flexGrow: 0 }}>
                         <IconButton sx={{ p: 0 }}>
-                            <Typography sx={{ color: 'white' }}>Your Address: {truncateAddress(account)}</Typography>
+                            <Typography sx={{ color: 'white' }}>{truncateAddress(account)}</Typography>
                         </IconButton>
                     </Box>
                 </Toolbar>

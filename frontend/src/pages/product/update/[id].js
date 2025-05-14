@@ -16,8 +16,7 @@ import {
   RegisterContainer,
 } from "../../../components/Layout";
 import { PRODUCT_STATUS, formatUPI, normalizeStatus, getStatusString } from "../../../hooks/constants.js";
-import { Loading } from "../../../components/Loading";
-
+import Loading from "../../../components/Loading";
 import setWeb3 from "../../../hooks/setWeb3.js";
 import getWeb3 from "../../../hooks/getWeb3.js";
 
@@ -54,7 +53,7 @@ export const ProductUpdate = () => {
 
   const handleUpdate = async () => {
     if (!status) {
-      console.error("Status is missing.");
+      alert("Please select a status.");
       return;
     }
 
@@ -71,13 +70,11 @@ export const ProductUpdate = () => {
       // Log the result to ensure it was successful
       console.log("Stop added successfully:", result);
 
-      // Deactivate loading component
-      setLoading(false);
-
       // Redirect to the product page
       router.push(`/product/${id}`);
     } catch (error) {
       console.error("Error adding tracking stop:", error);
+    } finally {
       setLoading(false);
     }
   };
@@ -86,13 +83,7 @@ export const ProductUpdate = () => {
     return (
       <Layout>
         <AppBar />
-        <PageWrapper>
-          <Container maxWidth="1200px">
-            <MainContent>
-              <Loading />
-            </MainContent>
-          </Container>
-        </PageWrapper>
+        <Loading />
       </Layout>
     );
   }
