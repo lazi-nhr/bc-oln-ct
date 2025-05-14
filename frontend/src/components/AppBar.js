@@ -13,8 +13,8 @@ import Link from 'next/link';
 import useWeb3 from '../hooks/useWeb3';
 import { truncateAddress } from '../hooks/constants';
 
-const pagesInitialized = ['Overview', 'Register', 'product/create', 'product/1', 'product/update/1'];
-const pagesNotInitialized = ['Overview', 'Register', 'product/create', 'product/1', 'product/update/1'];
+const pagesInitialized = ['Overview'];
+const pagesNotInitialized = [];
 
 function ResponsiveAppBar() {
     const { account } = useWeb3();

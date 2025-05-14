@@ -18,7 +18,7 @@ import {
 import { USER_ROLE, normalizeRole } from "../hooks/constants.js";
 import setWeb3 from "../hooks/setWeb3.js";
 import { useRouter } from "next/router";
-import { Loading } from "../components/Loading";
+import Loading from "../components/Loading";
 
 export const Register = () => {
   const [role, setRole] = useState(""); // For storing the role

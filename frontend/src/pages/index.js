@@ -6,23 +6,29 @@ import Container from '@mui/material/Container';
 import Search from '../components/Search';
 import { Layout, PageWrapper, MainContent, ColumnSection, Title, Separator } from '../components/Layout';
 import getWeb3 from "../hooks/getWeb3.js";
+import Loading from '../components/Loading';
 
 export const Home = () => {
   const router = useRouter();
   const { getUser } = getWeb3();
+  const [loading, setLoading] = useState(false);
 
   const handleConnect = async () => {
     if (window.ethereum) {
       try {
+        // Set loading state to true
+        setLoading(true);
+
         // Request account access if needed
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         
         // Call the getUser function to check if the user is registered
         const user = await getUser(accounts[0]);
         console.log('Username:', user.username);
+        console.log('Role:', user.role);
 
         // Check if the user is registered
-        if (user.role === 0) {
+        if (Number(user.role) === 0) {
           console.log('User is not registered');
           // Direct to register page
           router.push('/register');
@@ -34,11 +40,23 @@ export const Home = () => {
 
       } catch (error) {
         console.error('User rejected the request:', error);
+      } finally {
+        // Set loading state to false
+        setLoading(false);
       }
     } else {
       alert('Please install MetaMask on a compatible browser (Google Chrome or Mozilla Firefox).');
     }
   };
+
+  if (loading) {
+    return (
+      <Layout>
+        <AppBar />
+        <Loading />
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

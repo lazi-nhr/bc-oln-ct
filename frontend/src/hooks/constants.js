@@ -1,5 +1,5 @@
-export const ADMIN_CONTRACT_ADDRESS = "0x7CbEd915f6DdECA06B72f9553990De4Be1c9ae78";
-export const TRACKING_CONTRACT_ADDRESS = "0x9d550392AC753030f793F856B0d9E9331e565bEf";
+export const ADMIN_CONTRACT_ADDRESS = "0x342e728E2A9FFBC29b4556D91aACaD2447346b64";
+export const TRACKING_CONTRACT_ADDRESS = "0x9C6c3dD26d8b15EA87ea89F7b8529C4a78B7FE6C";
 export const DEFAULT_ADDRESS = "0xA5f11536E55f1D77b8033F56C42C5c7aEE1DA9EB";
 export const SEPOLIA_CHAIN_ID = "0xaa36a7";
 export const INFURA_URL = "https://sepolia.infura.io/v3/63703b3efd0948c2adf595d101b8d981";
@@ -145,10 +145,13 @@ export const normalizeRole = (role) => {
         // Convert to lowercase for comparison
         const normalizedRole = role.toLowerCase();
         // Check if this status exists in the USER_ROLE values
-        const matchingRole = Object.values(USER_ROLE).find(s => s === normalizedRole);
+        const matchingEntry = Object.entries(USER_ROLE).find(
+            ([, value]) => value.toLowerCase() === normalizedRole
+        );
         // If a match is found, return the role number
-        if (matchingRole) {
-            return USER_ROLE_NUMBER[matchingRole.toUpperCase()];
+        if (matchingEntry) {
+            const [key] = matchingEntry;
+            return USER_ROLE_NUMBER[key];
         }
     }
     return role;

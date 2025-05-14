@@ -59,7 +59,7 @@ contract Track is ITrack {
     }
 
     constructor() {
-        admin = IAdmin(0x7CbEd915f6DdECA06B72f9553990De4Be1c9ae78);
+        admin = IAdmin(0x342e728E2A9FFBC29b4556D91aACaD2447346b64);
     }
 
     function addStop(

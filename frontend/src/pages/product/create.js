@@ -13,6 +13,7 @@ import {
 } from "../../components/Layout";
 import setWeb3 from "../../hooks/setWeb3.js";
 import { useRouter } from "next/router";
+import Loading from "../../components/Loading";
 
 export const ProductCreation = () => {
   const router = useRouter();
@@ -32,10 +33,10 @@ export const ProductCreation = () => {
     try {
       setLoading(true);
       const upi = await setProduct(productName);
-      setLoading(false);
       router.push(`/product/update/${upi}`);
     } catch (error) {
       console.error("Error creating product:", error);
+    } finally {
       setLoading(false);
     }
   };
