@@ -44,9 +44,11 @@ Users can update the status of a product as it moves through the supply chain.
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-### Clone
+### Clone the repository
 
 Firstly, you will need to clone this repository.
+
+### Access the "frontend" folder
 
 Open the "frontend" folder in your terminal, e.g.:
 
