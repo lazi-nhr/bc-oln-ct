@@ -1,10 +1,50 @@
 # Supply-Chain dApp
 
-## Getting Started
+## Description
+
+This is a decentralized application (dApp) for managing supply chains using blockchain technology. It allows users to track and verify the authenticity of products as they move through the supply chain, ensuring transparency and trust among all parties involved.
+
+### Landing Page
+
+The landing page provides two functionalities: product lookup and user login.
+
+![Landing Page](./images/0_landing_page.jpg)
+
+### Registration
+
+A registered user will be automatically logged in when they connect their wallet. For new users, they can register by providing their details.
+
+![Registration](./images/1_registration.jpg)
+
+### Dashboard
+
+The dashboard provides two functionalities: product lookup and an overview of the user's products.
+
+![Dashboard](./images/2_dashboard.jpg)
+
+### Product Creation
+
+Users can create new products by providing the necessary details.
+
+![Product Creation](./images/3_product_creation.jpg)
+
+### Product Details
+
+Users can view detailed information about a product, including its history and current status.
+
+![Product Details](./images/4_product_details.jpg)
+
+### Product Update
+
+Users can update the status of a product as it moves through the supply chain.
+
+![Product Update](./images/5_product_update.jpg)
+
+## Setup/Installation
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-## Setup/Installation
+### Clone
 
 Firstly, you will need to clone this repository.
 
@@ -66,21 +106,3 @@ src/contracts: smart contracts. these have to be deployed independently using Re
 src/hooks: here, we interact with the blockchain, e.g. smart contracts.
 
 public: media/images that are being used in user interface.
-
-## To-Do (use Google Chrome)
-
-x product/[id].js: connect to new admin smart contract to see full product details
-x product/[id].js: implement button functionality that directs to product/update/[id].js
-x overview.js: get and display correct product list
-o index.js: implement correct metamask activation/initialization
-x hooks/setWeb3.js: call correct methods
-o components/AppBar.js: correctly call metamask
-x register.js: implement full blockchain integration (lazi)
-x register.js: elaborate role name system (xirui)
-x product/create.js: implement full blockchain integration (lazi)
-x product/create.js: elaborate status name system (xirui)
-x product/update/[id].js: implement full blockchain integration (lazi)
-x product/update/[id].js: elaborate status name system (xirui)
-x add modifiers to smart contracts. role restrictions, user restrictions (lennart)
-
-o final report (jingyi)
