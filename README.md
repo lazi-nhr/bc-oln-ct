@@ -12,7 +12,7 @@ The landing page provides two functionalities: product lookup and user login.
 
 ### Registration
 
-A registered user will be automatically logged in when they connect their wallet. For new users, they can register by providing their details.
+Registered users will be automatically logged in when they connect their wallet. For new users, they can register by providing their details.
 
 ![Registration](./images/1_registration.jpg)
 
@@ -51,14 +51,14 @@ Firstly, you will need to clone this repository.
 Open the "frontend" folder in your terminal, e.g.:
 
 ```bash
-cd /path/to/folder/dApp
+cd /path/to/folder/frontend
 ```
 
 Tipp: in your IDE, you can right-click the folder and open it in an integrated terminal.
 
 ### Build (do only once at the beginning)
 
-If this is your first time running the project or you have added some new code, run this:
+If this is your first time running the project or you have added some new libraries to the code, run this:
 
 ```bash
 npm install
@@ -92,17 +92,3 @@ To successfully interact with the blockchain, e.g. smart contracts, a user needs
 ### Stop
 
 Press CTRL+C in the terminal to stop the application from running.
-
-## Content
-
-src: main folder. here, we do the work.
-
-src/pages: here are the individual sites.
-
-src/components: elements that are being reused across different pages.
-
-src/contracts: smart contracts. these have to be deployed independently using Remix IDE.
-
-src/hooks: here, we interact with the blockchain, e.g. smart contracts.
-
-public: media/images that are being used in user interface.
